@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.expenses.mouthblance.mapper.OldmanblanceMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="FnursinghomeID" property="fnursinghomeid" jdbcType="VARCHAR" />
+    <result column="FoldmanID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FPeriod" property="fperiod" jdbcType="INTEGER" />
+    <result column="FMoun" property="fmoun" jdbcType="INTEGER" />
+    <result column="FBeginAmount" property="fbeginamount" jdbcType="DECIMAL" />
+    <result column="FArAmount" property="faramount" jdbcType="DECIMAL" />
+    <result column="FApAmount" property="fapamount" jdbcType="DECIMAL" />
+    <result column="FEndAmount" property="fendamount" jdbcType="DECIMAL" />
+   <result column="Fyearmouth" property="fyearmouth" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    FID, FnursinghomeID, FoldmanID, FPeriod, FMoun, FBeginAmount, FArAmount, FApAmount, 
+    FEndAmount
+  </sql>
+  
+  <sql id="where">
+  		<where>
+  		 1=1
+  		 <if test="foldmanName !=null and foldmanName !=''">
+  		 	and oldman.FoldmanName=#{foldmanName}
+  		 </if>
+  		 <if test="froomName !=null and froomName !=''">
+  		 	and room.froomname=#{froomName}
+  		 </if>
+  		 <if test="fbedNumber !=null and fbedNumber !=''">
+  		 	and bed.fbedNumber=#{fbedNumber}
+  		 </if>
+  	</where>
+  </sql>
+  
+   <!-- 查询老人的余额 -->
+  <select id="QueryList" resultType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance">
+         SELECT 
+			  temp.* 
+			FROM
+			  (SELECT 
+			    oldman.FNursing_homeID AS fnursinghomeid,
+			    oldman.fid AS foldmanid,
+			    oldman.FoldManName AS foldmanName,
+			    room.FRoomName AS froomName,
+			    bed.FBedNumber AS fbedNumber 
+			  FROM
+			     t_oldman_main oldman
+			    LEFT OUTER JOIN t_room room 
+			      ON oldman.FroomID = room.fid 
+			    LEFT OUTER JOIN t_bed bed 
+			      ON oldman.FbedID = bed.fid 
+			      <include refid="where"></include> 
+			      
+			  GROUP BY oldman.fid
+			  ) temp 
+ 	   <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> 
+  </select>
+  
+  <select id="getTotalSize" resultType="java.lang.Integer" >
+              SELECT 
+			  count(temp.foldmanid) 
+			FROM
+			  (SELECT 
+			    oldman.fid AS foldmanid 
+			  FROM
+			  	t_oldman_main oldman
+			    LEFT OUTER JOIN t_room room 
+			      ON oldman.FroomID = room.fid 
+			    LEFT OUTER JOIN t_bed bed 
+			      ON oldman.FbedID = bed.fid 
+			      <include refid="where"></include> 
+			  GROUP BY oldman.fid 
+			  ) temp 
+  </select>
+  
+  <select id="getOldManBlance" resultMap="BaseResultMap">
+  		SELECT 
+		  fperiod,
+		  fmoun,
+		  fyearmouth 
+		FROM
+		  (SELECT 
+		    omb.FPeriod,
+		    omb.FMoun,
+		    CONCAT(omb.FPeriod,'-', omb.FMoun) AS fyearmouth 
+		  FROM
+		    t_fygl_oldmanblance omb
+		    ) temp
+		ORDER BY fyearmouth DESC
+		LIMIT 0,1 
+  </select>
+  
+    <select id="getAllOldManOfwhole" resultType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo">
+  		SELECT
+			om.fid as fid,
+			om.FNursing_homeID as fnursingHomeid,
+			om.FoldManStatusID AS foldManStatusID
+	 	from t_oldman_main om
+		where 1=1
+		<!-- and om.FoldManStatusID IN ('46','47') -->
+  </select>
+  
+  <select id="getOldManBlanceByOldman" resultMap="BaseResultMap">
+  		SELECT
+  		  fid,
+  		  foldmanid,
+  		  fnursinghomeid, 
+		  fperiod,
+		  fmoun,
+		  fbeginamount,
+		  faramount,
+		  fapamount,
+		  fendamount,
+		  fyearmouth 
+		FROM
+		  (SELECT
+		    omb.fid,
+		  	omb.foldmanid,
+		  	omb.fnursinghomeid, 
+		    omb.FPeriod,
+		    omb.FMoun,
+		    omb.FBeginAmount,
+		    omb.FArAmount,
+		    omb.FApAmount,
+		    omb.FEndAmount,
+		    CONCAT(omb.FPeriod,'-', omb.FMoun) AS fyearmouth 
+		  FROM
+		    t_fygl_oldmanblance omb
+		    where omb.foldmanid=#{foldmanid}
+		    ) temp
+		ORDER BY fyearmouth DESC
+		LIMIT 0,1 
+  </select>
+  
+  <select id="getFaramountTotal" resultType="java.math.BigDecimal" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance">
+  		SELECT 
+		  IFNULL(SUM(rpaye.FArPaymentAmount), 0) AS total 
+		FROM
+		  t_fygl_rpaymententry rpaye 
+		  INNER JOIN 
+		    (SELECT DISTINCT 
+		      (paye.FsourceBillentryID) AS FsourceBillentryID 
+		    FROM
+		      t_fygl_payment pay 
+		      INNER JOIN t_fygl_paymententry paye 
+		        ON pay.fid = paye.FParentid
+		        WHERE pay.FoldmanID = #{foldmanid} 
+				    <if test="fperiod !=null">
+				    	AND pay.fperiod = #{fperiod} 
+				    </if>
+				    <if test="fmoun !=null">
+				    	AND pay.fmoun = #{fmoun}
+				    </if>
+		        ) temp 
+		    ON temp.FsourceBillentryID = rpaye.fid
+  </select>
+  
+  <select id="getFapamountTotal" resultType="java.math.BigDecimal">
+  		SELECT 
+		   IFNULL(SUM(paye.FArPaymentAmount), 0) AS total
+		  FROM
+		    t_fygl_payment pay 
+		    INNER JOIN t_fygl_paymententry paye 
+		      ON pay.fid = paye.FParentid 
+		  WHERE pay.FoldmanID = #{foldmanid}  
+		    <if test="fperiod !=null">
+				AND pay.fperiod = #{fperiod} 
+			</if>
+			<if test="fmoun !=null">
+				AND pay.fmoun = #{fmoun}
+			</if>
+  </select>
+  
+    <select id="getFaramountTotalBlance" resultType="java.math.BigDecimal" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance">
+  		SELECT 
+		  IFNULL(SUM(rpaye.FArPaymentAmount), 0) AS total 
+		FROM
+		  t_fygl_rpayment rpay
+		  inner join t_fygl_rpaymententry rpaye 
+		  on rpay.fid = rpaye.FParentid 
+		WHERE rpay.FoldmanID = #{foldmanid} 
+				AND rpay.fperiod = #{fperiod} 
+				AND rpay.fmoun = #{fmoun}
+  </select>
+  
+  <select id="getFapamountTotalBlance" resultType="java.math.BigDecimal">
+  		SELECT 
+		   IFNULL(SUM(paye.FArPaymentAmount), 0) AS total
+		  FROM
+		    t_fygl_payment pay 
+		    INNER JOIN t_fygl_paymententry paye 
+		      ON pay.fid = paye.FParentid 
+		  WHERE pay.FoldmanID = #{foldmanid}  
+		    AND pay.fperiod = #{fperiod}
+		    AND pay.fmoun = #{fmoun}
+  </select>
+  
+   <select id="getOldManChargeNeed" parameterType="java.lang.String" resultType="com.channelsoft.ems.po.OldManChargePo">
+  		  		select 
+		  omc.fid as fID,
+		  omc.FManChargeID as fManChargeID,
+		  omc.FChargePrice as fChargePrice 
+		from
+		  t_oldman_charge omc 
+		  inner join t_charge_standard cs
+		   ON omc.FManChargeID = cs.FID 
+		  inner join t_oldman_main om
+		   on omc.FOldManID=om.FID
+		   left outer join data_dictionary oldstatus
+		    on om.FoldManStatusID=oldstatus.DC_ID  
+		where omc.FOldChargeStatus = '1' 
+		  and cs.FIsCycleFee = '1' 
+		  AND (oldstatus.DC_ID = 46 
+		    OR oldstatus.DC_ID = 47)
+		  and cs.FChargeCycle=15   
+		  and omc.FOldManID=#{foldmanid}   
+  </select>
+  
+  <delete id="deleteOldmanblanceByyearmouth" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance">
+  		DELETE FROM t_fygl_oldmanblance WHERE FPeriod=#{fperiod} and FMoun=#{fmoun}
+  </delete>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_fygl_oldmanblance
+    where FID = #{fid,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_fygl_oldmanblance
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" >
+    insert into t_fygl_oldmanblance (FID, FnursinghomeID, FoldmanID, 
+      FPeriod, FMoun, FBeginAmount, 
+      FArAmount, FApAmount, FEndAmount
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{fnursinghomeid,jdbcType=VARCHAR}, #{foldmanid,jdbcType=VARCHAR}, 
+      #{fperiod,jdbcType=INTEGER}, #{fmoun,jdbcType=INTEGER}, #{fbeginamount,jdbcType=DECIMAL}, 
+      #{faramount,jdbcType=DECIMAL}, #{fapamount,jdbcType=DECIMAL}, #{fendamount,jdbcType=DECIMAL}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" >
+    insert into t_fygl_oldmanblance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fnursinghomeid != null" >
+        FnursinghomeID,
+      </if>
+      <if test="foldmanid != null" >
+        FoldmanID,
+      </if>
+      <if test="fperiod != null" >
+        FPeriod,
+      </if>
+      <if test="fmoun != null" >
+        FMoun,
+      </if>
+      <if test="fbeginamount != null" >
+        FBeginAmount,
+      </if>
+      <if test="faramount != null" >
+        FArAmount,
+      </if>
+      <if test="fapamount != null" >
+        FApAmount,
+      </if>
+      <if test="fendamount != null" >
+        FEndAmount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnursinghomeid != null" >
+        #{fnursinghomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanid != null" >
+        #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fperiod != null" >
+        #{fperiod,jdbcType=INTEGER},
+      </if>
+      <if test="fmoun != null" >
+        #{fmoun,jdbcType=INTEGER},
+      </if>
+      <if test="fbeginamount != null" >
+        #{fbeginamount,jdbcType=DECIMAL},
+      </if>
+      <if test="faramount != null" >
+        #{faramount,jdbcType=DECIMAL},
+      </if>
+      <if test="fapamount != null" >
+        #{fapamount,jdbcType=DECIMAL},
+      </if>
+      <if test="fendamount != null" >
+        #{fendamount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" >
+    update t_fygl_oldmanblance
+    <set >
+      <if test="fnursinghomeid != null" >
+        FnursinghomeID = #{fnursinghomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanid != null" >
+        FoldmanID = #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fperiod != null" >
+        FPeriod = #{fperiod,jdbcType=INTEGER},
+      </if>
+      <if test="fmoun != null" >
+        FMoun = #{fmoun,jdbcType=INTEGER},
+      </if>
+      <if test="fbeginamount != null" >
+        FBeginAmount = #{fbeginamount,jdbcType=DECIMAL},
+      </if>
+      <if test="faramount != null" >
+        FArAmount = #{faramount,jdbcType=DECIMAL},
+      </if>
+      <if test="fapamount != null" >
+        FApAmount = #{fapamount,jdbcType=DECIMAL},
+      </if>
+      <if test="fendamount != null" >
+        FEndAmount = #{fendamount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.expenses.rpayment.po.Oldmanblance" >
+    update t_fygl_oldmanblance
+    set FnursinghomeID = #{fnursinghomeid,jdbcType=VARCHAR},
+      FoldmanID = #{foldmanid,jdbcType=VARCHAR},
+      FPeriod = #{fperiod,jdbcType=INTEGER},
+      FMoun = #{fmoun,jdbcType=INTEGER},
+      FBeginAmount = #{fbeginamount,jdbcType=DECIMAL},
+      FArAmount = #{faramount,jdbcType=DECIMAL},
+      FApAmount = #{fapamount,jdbcType=DECIMAL},
+      FEndAmount = #{fendamount,jdbcType=DECIMAL}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+</mapper>

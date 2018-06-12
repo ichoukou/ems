@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.channelsoft.ems.nursing.nursingProject.mapper.NursingProjectMapper">
+    <resultMap id="BaseResultMap" type="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo">
+        <id column="FID" jdbcType="VARCHAR" property="fid"/>
+        <result column="Fnursing_homeID" property="fNursingHomeID" jdbcType="VARCHAR" />
+        <result column="FAuditorID" property="fAuditorID" jdbcType="VARCHAR" />
+        <result column="FAuditTime" property="fAuditTime" jdbcType="TIMESTAMP" />
+        <result column="FCreatorID" property="fCreatorID" jdbcType="VARCHAR" />
+        <result column="FCreateTime" property="fCreateTime" jdbcType="TIMESTAMP" />
+        <result column="FModifierID" property="fModifierID" jdbcType="VARCHAR" />
+        <result column="FModificationTime" property="fModifierTime" jdbcType="TIMESTAMP" />
+        <result column="FRemarks" property="fRemarks" jdbcType="VARCHAR" />
+        <result column="Fnumber" property="fNumber" jdbcType="VARCHAR" />
+        <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+        <result column="FServiceGroupID" property="fServiceGroupID" jdbcType="VARCHAR" />
+        <result column="FexecuteType" property="fExecuteType" jdbcType="VARCHAR" />
+        <result column="Fexecutecycle" property="fExecutecycle" jdbcType="INTEGER" />
+        <result column="FexecuteQty" property="fExecuteQty" jdbcType="INTEGER" />
+        <result column="Fexecutetime" property="fExecutetime" jdbcType="TIMESTAMP" />
+        <result column="FStarteDate" property="fStarteDate" jdbcType="TIMESTAMP" />
+        <result column="FEndDate" property="fEndDate" jdbcType="TIMESTAMP" />
+        <result column="Fname" property="fName" jdbcType="VARCHAR" />
+        <result column="serviceGroupName" property="serviceGroupName" jdbcType="VARCHAR" />
+        <result column="FExcludtime" property="fExcludtime" jdbcType="INTEGER" />
+        <result column="FserviceType" property="fserviceType" jdbcType="VARCHAR" />
+    </resultMap>
+	
+	<select id="queryList" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo" resultMap="BaseResultMap">
+        SELECT 
+		  DISTINCT(si.FServiceGroupID) AS FServiceGroupID,
+		  sg.Fname AS serviceGroupName,
+		  sg.FserviceType AS fserviceType
+		FROM
+		  T_KFGL_SERVICEITEM si 
+		 LEFT JOIN t_kfgl_servicegroup sg 
+		 ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 
+			<if test="fServiceGroupID !=null and fServiceGroupID !=''">
+				and si.FServiceGroupID=#{fServiceGroupID}
+			</if>
+			<if test="fserviceType !=null and fserviceType !=''">
+				and sg.fserviceType=#{fserviceType}
+			</if>
+		</where> 
+		ORDER BY sg.FserviceType 
+       <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> 
+    </select>
+	
+	<select id="getTotalSize" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo" resultType="java.lang.Integer">
+        SELECT 
+		  count(DISTINCT(si.FServiceGroupID))
+		FROM
+		  T_KFGL_SERVICEITEM si 
+		 LEFT JOIN t_kfgl_servicegroup sg 
+		 ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 
+			<if test="fServiceGroupID !=null and fServiceGroupID !=''">
+				and si.FServiceGroupID=#{fServiceGroupID}
+			</if>
+			<if test="fserviceType !=null and fserviceType !=''">
+				and sg.fserviceType=#{fserviceType}
+			</if>
+		</where>  
+    </select>
+	
+    <select id="queryDetailList" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo" resultMap="BaseResultMap">
+       SELECT 
+		  si.*,
+		  sg.Fname AS serviceGroupName,
+		   sg.FserviceType AS fserviceType
+		FROM
+		  T_KFGL_SERVICEITEM si 
+		LEFT JOIN t_kfgl_servicegroup sg ON
+		  si.FServiceGroupID=sg.fid
+		 LEFT JOIN t_kfgl_serviceitemlevel sl
+    		ON si.FID = sl.FParentid
+		 	<where>
+		 		si.fServiceGroupID=#{fServiceGroupID}
+		 		<if test="fserviceLevels !=null and fserviceLevels !=''">
+		 			and sl.FnurseLevelID=#{fserviceLevels}
+		 		</if>
+		 	</where>
+		 	GROUP BY si.FID
+		 	ORDER BY sg.FserviceType 
+    </select>
+    
+    <select id="queryServiceGroupList" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo" resultType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo">
+        SELECT
+          sg.fid as fid, 
+		  sg.fName as fName,
+		  sg.fServiceType AS fServiceType
+		FROM
+ 			t_kfgl_servicegroup sg 
+		<where>
+			1=1 
+			<if test="fName !=null and fName !=''">
+				and sg.fName=#{fName}
+			</if>
+			<if test="fServiceType !=null and fServiceType !=''">
+				and sg.fServiceType=#{fServiceType}
+			</if>
+		</where>  
+       <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> 
+    </select>
+    
+    <select id="getServiceGroupTotalSize" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo" resultType="java.lang.Integer">
+        SELECT 
+		 count(1)
+		FROM
+ 			t_kfgl_servicegroup sg 
+		<where>
+			1=1 
+			<if test="fName !=null and fName !=''">
+				and sg.fName=#{fName}
+			</if>
+			<if test="fServiceType !=null and fServiceType !=''">
+				and sg.fServiceType=#{fServiceType}
+			</if>
+		</where>  
+    </select>
+    
+    
+    <insert id="insertNursingServiceGroup" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo">
+    	insert into t_kfgl_servicegroup (FID, Fnursing_homeID, FAuditorID, 
+	      FauditTime, Fnumber, Fstatus, 
+	      Fname, FserviceType)
+    	values (#{fid,jdbcType=VARCHAR}, #{fNursingHomeID,jdbcType=VARCHAR}, #{fAuditorID,jdbcType=VARCHAR}, 
+	      #{fAuditTime,jdbcType=TIMESTAMP}, #{fNumber,jdbcType=VARCHAR}, #{fStatus,jdbcType=VARCHAR}, 
+	      #{fName,jdbcType=VARCHAR}, #{fServiceType,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateNursingServiceGroup" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo">
+    	update t_kfgl_servicegroup 
+    	<set>
+    	  <if test="fName !=null and fName !=''" >
+	        fName = #{fName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fServiceType !=null and fServiceType !=''" >
+	        fServiceType = #{fServiceType,jdbcType=VARCHAR},
+	      </if>
+      </set>
+      where fid=#{fid}
+    </update>
+    
+    <select id="checkNursingServiceGroupName" parameterType="java.lang.String" resultType="java.lang.String">
+    	select fid from t_kfgl_servicegroup where fname=#{fName}
+    </select>
+    
+    <insert id="insertNursingProject" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo">
+    	insert into t_kfgl_serviceitem (
+    	   FID, Fnursing_homeID, FAuditorID, 
+	       FauditTime,FCreatorID,FCreateTime,
+	       FModifierID,FModificationTime,FRemarks,
+	       Fnumber, Fstatus,FServiceGroupID,
+	       FexecuteType,Fexecutecycle,FexecuteQty,
+	       Fexecutetime,FStarteDate,FEndDate,
+	       Fname,fExcludtime)
+    	values (
+    	  #{fid,jdbcType=VARCHAR}, #{fNursingHomeID,jdbcType=VARCHAR}, #{fAuditorID,jdbcType=VARCHAR}, 
+	      #{fAuditTime,jdbcType=TIMESTAMP}, #{fCreatorID,jdbcType=VARCHAR}, #{fCreateTime,jdbcType=TIMESTAMP}, 
+	      #{fModifierID,jdbcType=VARCHAR}, #{fModifierTime,jdbcType=TIMESTAMP}, #{fRemarks,jdbcType=VARCHAR}, 
+	      #{fNumber,jdbcType=VARCHAR}, #{fstatus,jdbcType=VARCHAR}, #{fServiceGroupID,jdbcType=VARCHAR}, 
+	      #{fExecuteType,jdbcType=VARCHAR}, #{fExecutecycle,jdbcType=INTEGER}, #{fExecuteQty,jdbcType=INTEGER}, 
+	      #{fExecutetime,jdbcType=VARCHAR}, #{fStarteDate,jdbcType=TIMESTAMP},#{fEndDate,jdbcType=TIMESTAMP},
+	      #{fName,jdbcType=VARCHAR},#{fExcludtime,jdbcType=INTEGER})
+    </insert>
+    
+    <select id="checkNursingProjectName" parameterType="java.lang.String" resultType="java.lang.String">
+    	select fid from t_kfgl_serviceitem where fname=#{fName}
+    </select>
+    
+    <select id="getDcValueByName" parameterType="com.channelsoft.ems.po.DataDictionaryPo" resultType="com.channelsoft.ems.po.DataDictionaryPo">
+    	select dc_id as id,dc_value as value from data_dictionary where dc_name=#{name}
+    </select>
+    <select id="getServiceGroups" resultType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceGroupPo">
+    	select fid as fid,fname as fName from t_kfgl_servicegroup where Fstatus='1'
+    	<if test="fServiceType !=null and fServiceType !=''">
+    		and fServiceType=#{fServiceType}
+    	</if>
+    </select>
+    
+    <delete id="deleteServiceItemLevel" parameterType="java.lang.String">
+    	delete from t_kfgl_serviceitemlevel where FParentid=#{fParentID}
+    </delete>
+    
+    <insert id="insertServiceItemLevel" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceItemLevelPo">
+    	insert into t_kfgl_serviceitemlevel (FID, FParentid, FnurseLevelID)
+    	values (#{fid,jdbcType=VARCHAR}, #{fParentID,jdbcType=VARCHAR}, #{fNurseLevelID,jdbcType=VARCHAR})
+    </insert>
+    
+    <select id="getNursingProject" parameterType="java.lang.String" resultMap="BaseResultMap">
+    	select * from t_kfgl_serviceitem where Fstatus='1' and fid=#{fid}
+    </select>
+    
+    <select id="getServiceLevelByFparentId" parameterType="java.lang.String" resultType="com.channelsoft.ems.nursing.nursingProject.po.NursingServiceItemLevelPo">
+    	select fid as fid,fParentID as fParentID,fNurseLevelID as fNurseLevelID from t_kfgl_serviceitemlevel where fParentID=#{fid}
+    </select>
+    
+    <delete id="delNursingProject" parameterType="java.lang.String">
+    	delete from t_kfgl_serviceitem where fid=#{fid}
+    </delete>
+    
+    <update id="updateNursingProject" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo">
+    	update t_kfgl_serviceitem 
+    	<set >
+    	  <if test="fNursingHomeID !=null and fNursingHomeID !=''" >
+	        FNURSING_HOMEID = #{fNursingHomeID,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fAuditorID !=null and fAuditorID !=''" >
+	        FAUDITORID = #{fAuditorID,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fAuditTime !=null and fAuditTime !=''" >
+	        FAUDITTIME = #{fAuditTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="fNumber !=null and fNumber !=''" >
+	        FNUMBER = #{fNumber,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fName !=null and fName !=''" >
+	        FNAME = #{fName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fServiceGroupID !=null and fServiceGroupID !=''" >
+	        FSERVICEGROUPID = #{fServiceGroupID,jdbcType=VARCHAR},
+	      </if>	
+	      <if test="fExecuteType !=null and fExecuteType !=''" >
+	        FEXECUTETYPE = #{fExecuteType,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fExecutecycle !=null and fExecutecycle !=''" >
+	        FEXECUTECYCLE = #{fExecutecycle,jdbcType=INTEGER},
+	      </if>
+	      <if test="fExecuteQty !=null and fExecuteQty !=''" >
+	        FEXECUTEQTY = #{fExecuteQty,jdbcType=INTEGER},
+	      </if>
+	      <if test="fExecutetime !=null and fExecutetime !=''" >
+	        FEXECUTETIME = #{fExecutetime,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fStarteDate !=null and fStarteDate !=''" >
+	        FSTARTEDATE = #{fStarteDate,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="fEndDate !=null and fEndDate !=''" >
+	        FENDDATE = #{fEndDate,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="fCreatorID !=null and fCreatorID !=''" >
+	        FCREATORID = #{fCreatorID,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fCreateTime != null  and fCreateTime !=''" >
+	        FCREATETIME = #{fCreateTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="fModifierID !=null and fModifierID !=''" >
+	        FMODIFIERID = #{fModifierID,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fModifierTime != null  and fModifierTime !=''" >
+	        FMODIFICATIONTIME = #{fModifierTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="fRemarks !=null and fRemarks !=''" >
+	        FREMARKS = #{fRemarks,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fstatus !=null and fstatus !=''" >
+	        FSTATUS = #{fstatus,jdbcType=VARCHAR},
+	      </if>
+	      <if test="fExcludtime !=null and fExcludtime !=''" >
+	        FEXCLUDTIME = #{fExcludtime,jdbcType=INTEGER},
+	      </if>
+      </set>
+      where fid=#{fid}
+    </update>
+    
+    <select id="checkProjectUsed" parameterType="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo" resultType="java.lang.Integer"> 
+    	select count(1) from 
+    	<if test="fserviceType==1">
+    		t_kfgl_oldmanserviceitem 
+    	</if>
+    	<if test="fserviceType==2">
+    		t_kfgl_publicserviceitem 
+    	</if>
+    	 where 1=1 
+    	 and FserviceitemID =#{fid}
+    </select>
+    
+    <select id="getNursingProjectPoByFid" parameterType="java.lang.String" resultMap="BaseResultMap">
+    	select * from t_kfgl_serviceitem where fid=#{fid}
+    </select>
+    
+    <select id="getFnursingHomeIDByUserID" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT
+			sm.FNursinghomeID
+		FROM
+			s_user su
+		INNER JOIN t_staff_message sm ON su.employ_id = sm.FID
+		where su.u_id=#{uid}
+    </select>
+    
+    <select id="checkServiceType" parameterType="java.lang.String" resultType="java.lang.String">
+    	select sg.FserviceType from t_kfgl_servicegroup sg where sg.fid=#{fServiceGroupID}
+    </select>
+</mapper>

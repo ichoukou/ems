@@ -1,0 +1,7 @@
+### MYSQL DATASOURCE ######
+app.mysql.url=jdbc:mysql://10.130.29.69:3306/ems_db?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+app.mysql.user=ucds
+app.mysql.password=ucds
+app.mysql.maxConnections=50
+app.mysql.initConnections=8
+app.mysql.maxidletime=30

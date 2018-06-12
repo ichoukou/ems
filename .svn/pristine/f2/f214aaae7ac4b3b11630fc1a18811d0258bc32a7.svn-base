@@ -1,0 +1,45 @@
+/**
+ * Created by wangjs on 2017/1/6.
+ */
+$(document).ready(
+    getOldMan()
+);
+
+function getOldMan(){
+    $.ajax({
+        url:contextPath+"/hosing/getom.do",
+        type:"post",
+        data:{
+        },
+        success:function(data) {
+            // alert(data)
+            console.log(data)
+            var len=data.total;
+            var row=data.rows;
+
+            for(var i=0;i<len;i++){
+                if(row[i].foldManStatusID!='2'){
+                    if(row[i].fPhoto==null){
+                        var div=document.createElement('div');
+                        div.style="display: inline-block;background-color: #FFF;height: 149px;width: 330px";
+                        var tempName=row[i].foldManName;
+                        // div.id="div_"+i;
+                        div.innerHTML='<img selectName="'+tempName+'" selectOmId="'+row[i].fID+'" onclick="getOldManWithPhoto(this)" src="/ems/img/a1.jpg" style="height: 117px;width: 99px;">' +
+                            '<span style="display: inline-block;"><ul><li>姓名：'+tempName+' </li> <li> 性别：'+row[i].fOldManIDnSex+' </li>' +
+                            ' <li> 房间信息：'+row[i].fBuildingName+'#'+row[i].fRoomName+'#'+row[i].fBedNumber+' </li> <li> 护理级别：'+row[i].fnursingLevel+' </li></ul> </span>';
+                        document.getElementById("myDiv").appendChild(div);
+                    }else{
+                        var div=document.createElement('div');
+                        // div.id="div_"+i;
+                        div.style="display: inline-block;background-color: #FFF;height: 149px;width: 330px";
+                        var tempName=row[i].foldManName;
+                        div.innerHTML='<img selectName="'+tempName+'" selectOmId="'+row[i].fID+'" onclick="getOldManWithPhoto(this)" src="/ems/picture/'+row[i].fPhoto+'" style="height: 117px;width: 99px;">' +
+                            '<span style="display: inline-block;"><ul><li>姓名：'+row[i].foldManName+' </li> <li> 性别：'+row[i].fOldManIDnSex+' </li>' +
+                            ' <li> 房间信息：'+row[i].fBuildingName+'#'+row[i].fRoomName+'#'+row[i].fBedNumber+' </li> <li> 护理级别：'+row[i].fnursingLevel+' </li></ul> </span>';
+                        document.getElementById("myDiv").appendChild(div);
+                    }
+                }
+            }
+        }
+    });
+}

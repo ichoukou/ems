@@ -1,0 +1,185 @@
+package com.channelsoft.ems.controller;
+/**
+ * wangjs
+ * 数据字典相关操作
+ */
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.channelsoft.ems.common.ConstantsMap;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.channelsoft.ems.po.AjaxResultPo;
+import com.channelsoft.ems.po.DataDictionaryPo;
+import com.channelsoft.ems.service.SysManagerService;
+
+@Controller
+@RequestMapping("/sys")
+public class SysManagerController {
+
+	private static Logger logger = Logger.getLogger(SysManagerController.class);
+	
+	@Autowired
+	private SysManagerService sysManagerService;
+	
+	
+	@RequestMapping("/dcList")
+	public String gotodataDictionary(HttpServletRequest request ,HttpServletResponse response){
+		
+		logger.debug("数据字典，已经跳转");
+		return "dataDictionary/dataDictionaryList";
+	}
+
+	/**
+	 * @Method: queryDataDiction
+	 * @Description: 分页查询数据字典
+	 * @Para: [DataDictionaryPo page, pageSize, sortName,sortOrder]
+	 * @Retun: AjaxResultPo
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/query")
+	public AjaxResultPo queryDataDiction(DataDictionaryPo po,int page,int pageSize,String sortName,
+								 String sortOrder, HttpServletRequest request ,HttpServletResponse response) {
+		logger.debug("查询数据字典，请求参数: "+ po.toString()+ "  page "+ page + " pageSize " + pageSize);
+		try{
+			List<DataDictionaryPo> dcList = sysManagerService.queryDcList(po,page,pageSize,sortName,sortOrder);
+			int dataCount=sysManagerService.queryCount(po);
+			return new AjaxResultPo(true, "查询数据字典成功", dataCount, dcList);
+		}catch (Exception e){
+			logger.error("查询数据字典失败",e);
+			return new AjaxResultPo(false, "查询数据字典失败");
+		}
+
+	}
+
+	/**
+	 * @Method: getdcList
+	 * @Description: 查询数据字典
+	 * @Para: [DataDictionaryPo]
+	 * @Retun: AjaxResultPo
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/get")
+	public AjaxResultPo getdcList(DataDictionaryPo po, HttpServletRequest request ,HttpServletResponse response){
+		logger.debug("进入SysManagerController.getdcList()方法");
+		List<DataDictionaryPo> dcList = sysManagerService.getDcList(po);
+		return new AjaxResultPo(true, "success", dcList.size(), dcList);
+	}
+
+	/**
+	 * @Method: check
+	 * @Description: 验证数据字典
+	 * @Para: [DataDictionaryPo]
+	 * @Retun: String
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/check")
+	public String check(DataDictionaryPo po,HttpServletRequest request ,HttpServletResponse response)
+								throws IOException{
+		logger.debug("进入SysManagerController.check（）方法 ");
+		boolean flag = true;
+		int result = sysManagerService.checkDc(po);
+		if(result>0){
+			flag = false;
+		}
+
+		Map<String, Boolean> map = new HashMap<String, Boolean>();
+		map.put("valid", flag);
+		ObjectMapper mapper = new ObjectMapper();
+		String resultString = "";
+		try {
+			resultString = mapper.writeValueAsString(map);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return resultString;
+	}
+
+	/**
+	 * @Method: addDictionary
+	 * @Description: 添加数据字典
+	 * @Para: [DataDictionaryPo]
+	 * @Retun: AjaxResultPo
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/addDc")
+	public AjaxResultPo addDictionary(DataDictionaryPo po, HttpServletRequest request ,HttpServletResponse response){
+		logger.debug("进入SysManagerController.addDictionary()方法");
+		try{
+			sysManagerService.addData(po);
+			ConstantsMap.queryDataDic();
+			return new AjaxResultPo(true, "添加数据字典成功");
+		}catch (Exception e){
+			logger.error("添加数据字典失败",e);
+			return new AjaxResultPo(false, "添加数据字典失败");
+		}
+	}
+
+	/**
+	 * @Method: updateDictionary
+	 * @Description: 更新数据字典
+	 * @Para: [DataDictionaryPo]
+	 * @Retun: AjaxResultPo
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/updateDc")
+	public AjaxResultPo updateDictionary(DataDictionaryPo po, HttpServletRequest request ,HttpServletResponse response){
+		logger.debug("进入SysManagerController.updateDc()方法");
+		logger.debug("参数: "+ po.toString());
+		try{
+			sysManagerService.updData(po);
+			ConstantsMap.queryDataDic();
+			return new AjaxResultPo(true, "更新数据字典成功");
+		}catch (Exception e){
+			logger.error("添加数据字典失败",e);
+			return new AjaxResultPo(false, "更新数据字典失败");
+		}
+	}
+
+	/**
+	 * @Method: updDcStatus
+	 * @Description: 数据字典禁用，逻辑删除 10为禁用状态
+	 * @Para: [DataDictionaryPo]
+	 * @Retun: AjaxResultPo
+	 * @Author: wangjs
+	 * @Date: 2017/2/26
+	 */
+	@ResponseBody
+	@RequestMapping("/updDcStatus")
+	public AjaxResultPo updDcStatus(DataDictionaryPo po, HttpServletRequest request ,HttpServletResponse response){
+		logger.debug("进入SysManagerController.updDcStatus()方法");
+		logger.debug("参数: "+ po.toString());
+		try{
+			sysManagerService.updDcStatus(po);
+			ConstantsMap.queryDataDic();
+			return new AjaxResultPo(true, "禁用数据字典成功");
+		}catch (Exception e){
+			logger.error("禁用数据字典失败",e);
+			return new AjaxResultPo(false, "禁用数据字典失败");
+		}
+	}
+	
+}

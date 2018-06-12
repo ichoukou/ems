@@ -1,0 +1,8 @@
+### MYSQL DATASOURCE ######
+app.mysql.url=jdbc:mysql://60.11.1.59:3306/ems_db?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+#app.mysql.url=jdbc:mysql://localhost:3306/ems_db?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8
+app.mysql.user=root
+app.mysql.password=123456
+app.mysql.maxConnections=50
+app.mysql.initConnections=8
+app.mysql.maxidletime=30

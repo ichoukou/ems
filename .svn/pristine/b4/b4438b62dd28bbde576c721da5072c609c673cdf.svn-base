@@ -1,0 +1,250 @@
+<%@ page import="com.channelsoft.ems.po.UserPo" %><%--
+  Created by IntelliJ IDEA.
+  User: wangjs
+  Date: 2016/12/20
+  Time: 11:30
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+    <style>
+        select{
+            width: 90px;
+            height: 23px;
+        }
+    </style>
+</head>
+<body>
+<div class="popover-content" style="width: 1000px;">
+    <table style="">
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="8" style="text-align: center;vertical-align: middle;">
+                    <input type="hidden" id="imageName" value="">
+                    <img id="img_1" src="/ems/img/a1.jpg" style="height: 135px;width: 110px;">
+                    <input onblur="addCheck_fileUpload_base()" type="file" name="myfiles" id="file_1" class="input_text" onchange="onChangFile('1')" style="width: 110px">
+                    <%--<label id="add_file_1_base" style="color: red;width:140px;height: auto">&nbsp;&nbsp;&nbsp;</label>--%>
+                </td>
+            </tr>
+            <tr>
+
+                <input id="fOldManID" type="hidden">
+                <input id="oldManName" type="hidden">
+                <input id="chargeId" type="hidden">
+                <input id="chargeHuId" type="hidden">
+
+                <input id="myRoomPrice" type="hidden">
+                <input id="bedPrice" type="hidden">
+                <input id="roomBed" type="hidden">
+
+                <input id="fNursingHomeID" type="hidden" value="33">
+                <td align="right" style="width:70px;">老人编号：</td>
+                <td style="width: 150px">
+                    <input placeholder="自动生成" readonly="readonly" type="text" maxlength="4" id="foldManNum"  required style="width: 90px;height: 23px">
+                </td>
+                <td align="right" style="width:70px;">老人姓名：</td>
+                <td style="width: 145px">
+                    <input onblur="addCheck_name_base()" name="foldManName" type="text" maxlength="8" id="foldManName" placeholder="必填项" required style="width: 90px;height: 23px">
+                    <label id="add_name_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+
+                </td>
+                <td align="right" style="width:70px;">老人性别：</td>
+                <td>
+                    <select name="fOldManIDnSex" id="fOldManIDnSex">
+                    </select>
+                </td>
+                <td align="right" style="width:80px;">&nbsp;老人状态：</td>
+                <td>
+                    <select id="foldManStatusID" required style="width: 90px;height: 23px">
+                        <option value='3'>在院</option>
+                        <option value='10'>请假</option>
+                        <option value='2'>退住</option>
+                    </select>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td align="right">老人职业：</td>
+                <td>
+                    <select id="foccupation" name="foccupation">
+
+                    </select>
+                </td>
+                <td align="right">出生日期：</td>
+                <td>
+                    <input onblur="addCheck_birth_base()" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" type="text" id="foldManBirth" style="width: 70px;height: 23px">
+                    <label id="add_birth_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                    <input name="foldManIsLunar" id="foldManIsLunar" type="checkbox" value="农历" />农历
+                </td>
+                <td align="right">政治面貌：</td>
+                <td>
+                    <select name="foldManPoliticsID" id="foldManPoliticsID">
+
+                    </select>
+                    <%--<input  type="text" maxlength="4"   required style="width: 90px;height: 23px">--%>
+                </td>
+                <td align="right">老人民族：</td>
+                <td>
+                    <select name="foldManNationID" id="foldManNationID">
+
+                    </select>
+                </td>
+
+            </tr>
+            <tr>
+                <td align="right">媒体渠道：</td>
+                <td>
+                    <select name="foldManMediaID" id="foldManMediaID">
+
+                    </select>
+                    <%--<input  type="text" maxlength="10"   required style="width: 90px;height: 23px">--%>
+                </td>
+
+                <td align="right">合同号：</td>
+                <td>
+                    <input name="fcontractNo" type="text" maxlength="4" id="fcontractNo" readonly="readonly" required style="width: 90px;height: 23px">
+                </td>
+                <td align="right">合同开始：</td>
+                <td>
+                    <input onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" type="text" id="fcontractBegin" style="width: 90px;height: 23px">
+                    <%--<label onblur="" id="add_fcontractBegin_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>--%>
+                </td>
+                <td align="right">合同结束：</td>
+                <td>
+                    <input onblur="addCheck_contentStopDate_base()" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" type="text" id="fcontractEnd" style="width: 90px;height: 23px">
+                    <label id="add_fcontractEnd_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                </td>
+            </tr>
+
+            <tr>
+                <td align="right">医保类型：</td>
+                <td>
+                    <select id="fMInsuranceType" name="fMInsuranceType">
+
+                    </select>
+                    <%--<input name="fMInsuranceType" type="text" maxlength="11" id="fMInsuranceType"  required style="width: 90px;height: 23px">--%>
+                </td>
+                <td align="right">老人卡号：</td>
+                <td>
+                    <input name="foldManCardNo" type="text" maxlength="10" id="foldManCardNo"  required style="width: 90px;height: 23px">
+                </td>
+                <td align="right">办理人：</td>
+
+                <td>
+                    <input value="<%=((UserPo)(request.getSession().getAttribute("loginUser"))).getfStaffName()%>" type="text" maxlength="11" id="ftransactor" required style="width: 90px;height: 23px">
+                </td>
+                <td align="right">护理员：</td>
+                <td>
+                    <input name="fnursing" placeholder="自动生成" type="text" maxlength="11" id="fnursing"  required style="width: 90px;height: 23px">
+                </td>
+            </tr>
+
+            <tr>
+                <td align="right">老人信仰：</td>
+                <td>
+                    <select name="foldManBeliefID" id="foldManBeliefID">
+
+                    </select>
+                </td>
+                <td align="right">入住类型</td>
+                <td>
+                    <select name="foldManTypeID" id="foldManTypeID" required style="width: 90px;height: 23px">
+
+                    </select>
+                </td>
+                <td align="right">老人手机：</td>
+                <td>
+                    <input onblur="checkMobilePhone()" name="foldManMobile" type="text" maxlength="11" id="foldManMobile"  required style="width: 90px;height: 23px">
+                    <label id="add_foldManMobile_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                </td>
+                <td align="right">入住日期：</td>
+                <td>
+                    <input onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" name="fcheckinTime" type="text" maxlength="10" id="fcheckinTime"  required style="width: 90px;height: 23px">
+                    <%--<label onblur="" id="add_fcheckinTime_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>--%>
+                </td>
+            </tr>
+
+            <tr>
+                <td align="right">所住大厦：</td>
+                <td>
+                    <select  onblur="addCheck_buildingID_base()" name="fbuildingID" id="fbuildingID" style="width: 90px;height: 23px">
+
+                    </select>
+                    <label id="add_build_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+
+                </td>
+
+                <td align="right">所住房间：</td>
+                <td>
+                    <select  onblur="addCheck_roomID_base()" name="froomID" id="froomID">
+
+                    </select>
+                    <label id="add_froomID_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                </td>
+                <td align="right">所住床位：</td>
+                <td colspan="2">
+                    <select id="fbedID" name="fbedID" onchange="addBedPrice()">
+
+                    </select>
+                    <%--<label onblur="" id="add_fbedID_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>--%>
+                    <input value="9" id="fisEntire" type="checkbox" onclick="myGray(this)"/>整租
+                </td>
+
+            </tr>
+
+            <tr>
+                <td align="right">身份证号：</td>
+                <td>
+                    <input onblur="addCheck_cardId_base()" id="foldManIdCard" type="text" maxlength="18" id="" placeholder="必填项" required style="width: 135px;height: 23px">
+                    <label id="add_cardId_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                </td>
+
+                <td align="right">护理级别：</td>
+                <td colspan="4">
+                    <input type="text" id="fnursingLevel" name="fnursingLevel" style="width: 90px;height: 23px">
+                    <%--<label id="add_fnursingLevel_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>--%>
+                    <button id="btn_add" type="button" data-toggle="modal" data-target="#addModal" onclick="showName()" >
+                        <span  aria-hidden="true"></span>定级
+                    </button>
+                </td>
+
+            </tr>
+            <tr>
+                <td align="right">户籍：</td>
+                <td colspan="8">
+                    <input onblur="addCheck_oldManNative_base()" name="foldManNative" type="text" maxlength="200" id="foldManNative"  required style="width: 710px;height: 23px">
+                    <label id="add_foldManNative_base" style="color: red;width:10px;height: auto">&nbsp;&nbsp;&nbsp;</label>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">说明：</td>
+                <td colspan="8">
+                    <textarea style="width: 710px;" name="fInstruction" id="fInstruction"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align:center;vertical-align:middle;">
+                    <button type="button" class="btn btn-default" onclick="closeModalBase()" data-dismiss="modal">关闭</button>
+                </td>
+                <td colspan="4" style="text-align:center;vertical-align:middle;">
+                    <button type="button" class="btn btn-primary" id="baseBtn" onclick="addBase()">保存</button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

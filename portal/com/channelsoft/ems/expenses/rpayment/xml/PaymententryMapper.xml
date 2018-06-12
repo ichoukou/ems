@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.expenses.rpayment.mapper.PaymententryMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.expenses.rpayment.po.Paymententry" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="FParentid" property="fparentid" jdbcType="VARCHAR" />
+    <result column="FCostItem" property="fcostitem" jdbcType="VARCHAR" />
+    <result column="FArPaymentAmount" property="farpaymentamount" jdbcType="DECIMAL" />
+    <result column="FsourceBillentryID" property="fsourcebillentryid" jdbcType="INTEGER" />
+    <result column="FsourceBillid" property="fsourcebillid" jdbcType="INTEGER" />
+    <result column="Fitemid" property="fitemid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FID, FParentid, FCostItem, FArPaymentAmount, FsourceBillentryID, FsourceBillid,Fitemid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_fygl_paymententry
+    where FID = #{fid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_fygl_paymententry
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.channelsoft.ems.expenses.rpayment.po.Paymententry" >
+    insert into t_fygl_paymententry (FID, FParentid, FCostItem, 
+      FArPaymentAmount, FsourceBillentryID, FsourceBillid,Fitemid
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{fparentid,jdbcType=VARCHAR}, #{fcostitem,jdbcType=VARCHAR}, 
+      #{farpaymentamount,jdbcType=DECIMAL}, #{fsourcebillentryid,jdbcType=INTEGER}, #{fsourcebillid,jdbcType=INTEGER},
+      #{fitemid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Paymententry" >
+    insert into t_fygl_paymententry
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fparentid != null" >
+        FParentid,
+      </if>
+      <if test="fcostitem != null" >
+        FCostItem,
+      </if>
+      <if test="farpaymentamount != null" >
+        FArPaymentAmount,
+      </if>
+      <if test="fsourcebillentryid != null" >
+        FsourceBillentryID,
+      </if>
+      <if test="fsourcebillid != null" >
+        FsourceBillid,
+      </if>
+      <if test="fitemid != null" >
+        fitemid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fparentid != null" >
+        #{fparentid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcostitem != null" >
+        #{fcostitem,jdbcType=VARCHAR},
+      </if>
+      <if test="farpaymentamount != null" >
+        #{farpaymentamount,jdbcType=DECIMAL},
+      </if>
+      <if test="fsourcebillentryid != null" >
+        #{fsourcebillentryid,jdbcType=INTEGER},
+      </if>
+      <if test="fsourcebillid != null" >
+        #{fsourcebillid,jdbcType=INTEGER},
+      </if>
+      <if test="fitemid != null" >
+        #{fitemid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Paymententry" >
+    update t_fygl_paymententry
+    <set >
+      <if test="fparentid != null" >
+        FParentid = #{fparentid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcostitem != null" >
+        FCostItem = #{fcostitem,jdbcType=VARCHAR},
+      </if>
+      <if test="farpaymentamount != null" >
+        FArPaymentAmount = #{farpaymentamount,jdbcType=DECIMAL},
+      </if>
+      <if test="fsourcebillentryid != null" >
+        FsourceBillentryID = #{fsourcebillentryid,jdbcType=INTEGER},
+      </if>
+      <if test="fsourcebillid != null" >
+        FsourceBillid = #{fsourcebillid,jdbcType=INTEGER},
+      </if>
+      <if test="fitemid != null" >
+        fitemid = #{fitemid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.expenses.rpayment.po.Paymententry" >
+    update t_fygl_paymententry
+    set FParentid = #{fparentid,jdbcType=VARCHAR},
+      FCostItem = #{fcostitem,jdbcType=VARCHAR},
+      FArPaymentAmount = #{farpaymentamount,jdbcType=DECIMAL},
+      FsourceBillentryID = #{fsourcebillentryid,jdbcType=INTEGER},
+      FsourceBillid = #{fsourcebillid,jdbcType=INTEGER},
+      fitemid = #{fitemid,jdbcType=VARCHAR}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+</mapper>

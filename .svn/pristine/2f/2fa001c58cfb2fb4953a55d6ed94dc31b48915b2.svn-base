@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.nursing.nursingPlanExcute.mapper.PublicServiceExecutePoMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="Fnursing_homeID" property="fnursingHomeid" jdbcType="VARCHAR" />
+    <result column="FAuditorID" property="fauditorid" jdbcType="VARCHAR" />
+    <result column="FauditTime" property="faudittime" jdbcType="TIMESTAMP" />
+    <result column="FcreatorID" property="fcreatorid" jdbcType="VARCHAR" />
+    <result column="FcreateTime" property="fcreatetime" jdbcType="TIMESTAMP" />
+    <result column="FmodifierID" property="fmodifierid" jdbcType="VARCHAR" />
+    <result column="FmodificationTime" property="fmodificationtime" jdbcType="TIMESTAMP" />
+    <result column="Fremarks" property="fremarks" jdbcType="VARCHAR" />
+    <result column="Fnumber" property="fnumber" jdbcType="VARCHAR" />
+    <result column="FpublicserviceitemID" property="fpublicserviceitemid" jdbcType="VARCHAR" />
+    <result column="FservicePlanID" property="fserviceplanid" jdbcType="VARCHAR" />
+    <result column="FserviceExecuteDate" property="fserviceexecutedate" jdbcType="TIMESTAMP" />
+    <result column="FexecuteRetun" property="fexecuteretun" jdbcType="VARCHAR" />
+    <result column="FroomID" property="froomid" jdbcType="VARCHAR" />
+    
+    <result column="FServiceGroupID" property="fServiceGroupID" jdbcType="VARCHAR" />
+    <result column="serviceGroupName" property="serviceGroupName" jdbcType="VARCHAR" />
+    <result column="FExcludtime" property="fExcludtime" jdbcType="INTEGER" />
+    <result column="FexecuteType" property="fExecuteType" jdbcType="VARCHAR" />
+    <result column="Fexecutecycle" property="fExecutecycle" jdbcType="INTEGER" />
+    <result column="FexecuteQty" property="fExecuteQty" jdbcType="INTEGER" />
+    <result column="Fexecutetime" property="fExecutetime" jdbcType="TIMESTAMP" />
+    <result column="FusedStatus" property="fUsedStatus" jdbcType="VARCHAR" />
+    <result column="Fname" property="fName" jdbcType="VARCHAR" />
+    
+    <result column="fexcludcount" property="fexcludcount" jdbcType="INTEGER" />
+    <result column="fplancount" property="fplancount" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FID, Fnursing_homeID, FAuditorID, FauditTime, FcreatorID, FcreateTime, FmodifierID, 
+    FmodificationTime, Fremarks, Fnumber, FpublicserviceitemID, FservicePlanID, FserviceExecuteDate, 
+    FexecuteRetun, FroomID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_kfgl_publicserviceexecute
+    where FID = #{fid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_kfgl_publicserviceexecute
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" >
+    insert into t_kfgl_publicserviceexecute (FID, Fnursing_homeID, FAuditorID, 
+      FauditTime, FcreatorID, FcreateTime, 
+      FmodifierID, FmodificationTime, Fremarks, 
+      Fnumber, FpublicserviceitemID, FservicePlanID, 
+      FserviceExecuteDate, FexecuteRetun, FroomID
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{fnursingHomeid,jdbcType=VARCHAR}, #{fauditorid,jdbcType=VARCHAR}, 
+      #{faudittime,jdbcType=TIMESTAMP}, #{fcreatorid,jdbcType=VARCHAR}, #{fcreatetime,jdbcType=TIMESTAMP}, 
+      #{fmodifierid,jdbcType=VARCHAR}, #{fmodificationtime,jdbcType=TIMESTAMP}, #{fremarks,jdbcType=VARCHAR}, 
+      #{fnumber,jdbcType=VARCHAR}, #{fpublicserviceitemid,jdbcType=VARCHAR}, #{fserviceplanid,jdbcType=VARCHAR}, 
+      #{fserviceexecutedate,jdbcType=TIMESTAMP}, #{fexecuteretun,jdbcType=VARCHAR}, #{froomid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" >
+    insert into t_kfgl_publicserviceexecute
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID,
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID,
+      </if>
+      <if test="faudittime != null" >
+        FauditTime,
+      </if>
+      <if test="fcreatorid != null" >
+        FcreatorID,
+      </if>
+      <if test="fcreatetime != null" >
+        FcreateTime,
+      </if>
+      <if test="fmodifierid != null" >
+        FmodifierID,
+      </if>
+      <if test="fmodificationtime != null" >
+        FmodificationTime,
+      </if>
+      <if test="fremarks != null" >
+        Fremarks,
+      </if>
+      <if test="fnumber != null" >
+        Fnumber,
+      </if>
+      <if test="fpublicserviceitemid != null" >
+        FpublicserviceitemID,
+      </if>
+      <if test="fserviceplanid != null" >
+        FservicePlanID,
+      </if>
+      <if test="fserviceexecutedate != null" >
+        FserviceExecuteDate,
+      </if>
+      <if test="fexecuteretun != null" >
+        FexecuteRetun,
+      </if>
+      <if test="froomid != null" >
+        FroomID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnursingHomeid != null" >
+        #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fpublicserviceitemid != null" >
+        #{fpublicserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceplanid != null" >
+        #{fserviceplanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceexecutedate != null" >
+        #{fserviceexecutedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fexecuteretun != null" >
+        #{fexecuteretun,jdbcType=VARCHAR},
+      </if>
+      <if test="froomid != null" >
+        #{froomid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" >
+    update t_kfgl_publicserviceexecute
+    <set >
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        FauditTime = #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        FcreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        FcreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        FmodifierID = #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        FmodificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        Fremarks = #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        Fnumber = #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fpublicserviceitemid != null" >
+        FpublicserviceitemID = #{fpublicserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceplanid != null" >
+        FservicePlanID = #{fserviceplanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceexecutedate != null" >
+        FserviceExecuteDate = #{fserviceexecutedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fexecuteretun != null" >
+        FexecuteRetun = #{fexecuteretun,jdbcType=VARCHAR},
+      </if>
+      <if test="froomid != null" >
+        FroomID = #{froomid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" >
+    update t_kfgl_publicserviceexecute
+    set Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      FauditTime = #{faudittime,jdbcType=TIMESTAMP},
+      FcreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      FcreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      FmodifierID = #{fmodifierid,jdbcType=VARCHAR},
+      FmodificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      Fremarks = #{fremarks,jdbcType=VARCHAR},
+      Fnumber = #{fnumber,jdbcType=VARCHAR},
+      FpublicserviceitemID = #{fpublicserviceitemid,jdbcType=VARCHAR},
+      FservicePlanID = #{fserviceplanid,jdbcType=VARCHAR},
+      FserviceExecuteDate = #{fserviceexecutedate,jdbcType=TIMESTAMP},
+      FexecuteRetun = #{fexecuteretun,jdbcType=VARCHAR},
+      FroomID = #{froomid,jdbcType=VARCHAR}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+      <select id="queryList" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" resultMap="BaseResultMap">
+         SELECT 
+		 DISTINCT(si.FServiceGroupID) AS FServiceGroupID,
+		 sg.Fname AS serviceGroupName,
+		 sg.FserviceType AS fserviceType
+		FROM t_kfgl_publicserviceplan psp
+			left join t_kfgl_publicserviceitem psi 
+			on psp.FpublicserviceitemID=psi.FID
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON psi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 and psp.froomid=#{froomid}
+		</where> 
+		ORDER BY sg.FserviceType 
+       <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if>
+    </select>
+	
+	<select id="getTotalSize" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" resultType="java.lang.Integer">
+        SELECT 
+		 COUNT( DISTINCT(si.FServiceGroupID))
+		FROM t_kfgl_publicserviceplan psp
+			left join t_kfgl_publicserviceitem psi 
+			on psp.FpublicserviceitemID=psi.FID
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON psi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 and psp.froomid=#{froomid}
+		</where>  
+    </select>
+  
+  <select id="queryDetailList" parameterType="com.channelsoft.ems.nursing.nursingPlanExcute.po.PublicServiceExecutePo" resultMap="BaseResultMap">
+       SELECT 
+		  si.FServiceGroupID,
+		  si.FExcludtime,
+		  si.FexecuteType,
+		  si.Fexecutecycle,
+		  si.FexecuteQty,
+		  si.Fexecutetime,
+		  si.Fname,
+		  sg.Fname AS serviceGroupName,
+		  sg.FserviceType AS fserviceType,
+		  psp.fstatus,
+		  psp.FroomID,
+		  psp.fid,
+		  psp.fid as fpublicserviceitemid,
+		  psp.fplancount,
+		  psp.fexcludcount
+		FROM t_kfgl_publicserviceplan psp
+			left join t_kfgl_publicserviceitem psi 
+			on psp.FpublicserviceitemID=psi.FID
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON psi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+		 	<where>
+		 		si.fServiceGroupID=#{fServiceGroupID}
+		 		and psp.fstatus  &lt;&gt; '3'
+				and psp.froomid=#{froomid}
+		 	</where>
+		 	GROUP BY si.FID
+			order by psp.FCreateTime DESC
+    </select>
+    
+    <update id="updatePlanStatusExcludcount" parameterType="java.lang.String">
+    	update t_kfgl_publicserviceplan
+    	set fstatus='2',
+    	fexcludcount=fexcludcount+1
+    	where fid=#{fid}
+    </update> 
+</mapper>

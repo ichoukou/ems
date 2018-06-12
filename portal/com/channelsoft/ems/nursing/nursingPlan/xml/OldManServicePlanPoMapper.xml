@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.nursing.nursingPlan.mapper.OldManServicePlanPoMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="Fnursing_homeID" property="fnursingHomeid" jdbcType="VARCHAR" />
+    <result column="FAuditorID" property="fauditorid" jdbcType="VARCHAR" />
+    <result column="FAuditTime" property="faudittime" jdbcType="TIMESTAMP" />
+    <result column="FCreatorID" property="fcreatorid" jdbcType="VARCHAR" />
+    <result column="FCreateTime" property="fcreatetime" jdbcType="TIMESTAMP" />
+    <result column="FModifierID" property="fmodifierid" jdbcType="VARCHAR" />
+    <result column="FModificationTime" property="fmodificationtime" jdbcType="TIMESTAMP" />
+    <result column="FRemarks" property="fremarks" jdbcType="VARCHAR" />
+    <result column="Fnumber" property="fnumber" jdbcType="VARCHAR" />
+    <result column="FoldmanserviceitemID" property="foldmanserviceitemid" jdbcType="VARCHAR" />
+    <result column="FserviceExecutePlanDate" property="fserviceexecuteplandate" jdbcType="TIMESTAMP" />
+    <result column="FoldManID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+    <result column="FExecutePlantime" property="fexecuteplantime" jdbcType="TIMESTAMP" />
+    <result column="FserviceType" property="fservicetype" jdbcType="VARCHAR" />
+    <result column="Fplancount" property="fplancount" jdbcType="INTEGER" />
+    <result column="Fexcludcount" property="fexcludcount" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    FID, Fnursing_homeID, FAuditorID, FAuditTime, FCreatorID, FCreateTime, FModifierID, 
+    FModificationTime, FRemarks, Fnumber, FoldmanserviceitemID, FserviceExecutePlanDate, 
+    FoldManID, Fstatus, FExecutePlantime, FserviceType, Fplancount, Fexcludcount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_kfgl_oldmanserviceplan
+    where FID = #{fid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_kfgl_oldmanserviceplan
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo" >
+    insert into t_kfgl_oldmanserviceplan (FID, Fnursing_homeID, FAuditorID, 
+      FAuditTime, FCreatorID, FCreateTime, 
+      FModifierID, FModificationTime, FRemarks, 
+      Fnumber, FoldmanserviceitemID, FserviceExecutePlanDate, 
+      FoldManID, Fstatus, FExecutePlantime, 
+      FserviceType, Fplancount, Fexcludcount
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{fnursingHomeid,jdbcType=VARCHAR}, #{fauditorid,jdbcType=VARCHAR}, 
+      #{faudittime,jdbcType=TIMESTAMP}, #{fcreatorid,jdbcType=VARCHAR}, #{fcreatetime,jdbcType=TIMESTAMP}, 
+      #{fmodifierid,jdbcType=VARCHAR}, #{fmodificationtime,jdbcType=TIMESTAMP}, #{fremarks,jdbcType=VARCHAR}, 
+      #{fnumber,jdbcType=VARCHAR}, #{foldmanserviceitemid,jdbcType=VARCHAR}, #{fserviceexecuteplandate,jdbcType=TIMESTAMP}, 
+      #{foldmanid,jdbcType=VARCHAR}, #{fstatus,jdbcType=VARCHAR}, #{fexecuteplantime,jdbcType=TIMESTAMP}, 
+      #{fservicetype,jdbcType=VARCHAR}, #{fplancount,jdbcType=INTEGER}, #{fexcludcount,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo" >
+    insert into t_kfgl_oldmanserviceplan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID,
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID,
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime,
+      </if>
+      <if test="fcreatorid != null" >
+        FCreatorID,
+      </if>
+      <if test="fcreatetime != null" >
+        FCreateTime,
+      </if>
+      <if test="fmodifierid != null" >
+        FModifierID,
+      </if>
+      <if test="fmodificationtime != null" >
+        FModificationTime,
+      </if>
+      <if test="fremarks != null" >
+        FRemarks,
+      </if>
+      <if test="fnumber != null" >
+        Fnumber,
+      </if>
+      <if test="foldmanserviceitemid != null" >
+        FoldmanserviceitemID,
+      </if>
+      <if test="fserviceexecuteplandate != null" >
+        FserviceExecutePlanDate,
+      </if>
+      <if test="foldmanid != null" >
+        FoldManID,
+      </if>
+      <if test="fstatus != null" >
+        Fstatus,
+      </if>
+      <if test="fexecuteplantime != null" >
+        FExecutePlantime,
+      </if>
+      <if test="fservicetype != null" >
+        FserviceType,
+      </if>
+      <if test="fplancount != null" >
+        Fplancount,
+      </if>
+      <if test="fexcludcount != null" >
+        Fexcludcount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnursingHomeid != null" >
+        #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanserviceitemid != null" >
+        #{foldmanserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceexecuteplandate != null" >
+        #{fserviceexecuteplandate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foldmanid != null" >
+        #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="fexecuteplantime != null" >
+        #{fexecuteplantime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fservicetype != null" >
+        #{fservicetype,jdbcType=VARCHAR},
+      </if>
+      <if test="fplancount != null" >
+        #{fplancount,jdbcType=INTEGER},
+      </if>
+      <if test="fexcludcount != null" >
+        #{fexcludcount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo" >
+    update t_kfgl_oldmanserviceplan
+    <set >
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        FCreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        FCreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        FModifierID = #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        FModificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        FRemarks = #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        Fnumber = #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanserviceitemid != null" >
+        FoldmanserviceitemID = #{foldmanserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceexecuteplandate != null" >
+        FserviceExecutePlanDate = #{fserviceexecuteplandate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foldmanid != null" >
+        FoldManID = #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        Fstatus = #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="fexecuteplantime != null" >
+        FExecutePlantime = #{fexecuteplantime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fservicetype != null" >
+        FserviceType = #{fservicetype,jdbcType=VARCHAR},
+      </if>
+      <if test="fplancount != null" >
+        Fplancount = #{fplancount,jdbcType=INTEGER},
+      </if>
+      <if test="fexcludcount != null" >
+        Fexcludcount = #{fexcludcount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo" >
+    update t_kfgl_oldmanserviceplan
+    set Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      FCreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      FCreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      FModifierID = #{fmodifierid,jdbcType=VARCHAR},
+      FModificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      FRemarks = #{fremarks,jdbcType=VARCHAR},
+      Fnumber = #{fnumber,jdbcType=VARCHAR},
+      FoldmanserviceitemID = #{foldmanserviceitemid,jdbcType=VARCHAR},
+      FserviceExecutePlanDate = #{fserviceexecuteplandate,jdbcType=TIMESTAMP},
+      FoldManID = #{foldmanid,jdbcType=VARCHAR},
+      Fstatus = #{fstatus,jdbcType=VARCHAR},
+      FExecutePlantime = #{fexecuteplantime,jdbcType=TIMESTAMP},
+      FserviceType = #{fservicetype,jdbcType=VARCHAR},
+      Fplancount = #{fplancount,jdbcType=INTEGER},
+      Fexcludcount = #{fexcludcount,jdbcType=INTEGER}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updatePlanStatus" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServicePlanPo">
+		update  t_kfgl_oldmanserviceplan
+		set  Fstatus='3'
+  		where FoldManID=#{foldmanid} and FoldmanserviceitemID=#{foldmanserviceitemid}
+  </update>
+</mapper>

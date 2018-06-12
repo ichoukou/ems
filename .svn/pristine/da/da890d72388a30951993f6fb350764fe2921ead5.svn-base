@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.expenses.retirement.mapper.RetirementMapper" >
+  <!-- 退住结款 详情结款页面 -->
+   <resultMap id="RetirementMap" type="com.channelsoft.ems.expenses.retirement.po.RetirementPo" >
+    <id column="fid" property="fid" jdbcType="VARCHAR" />
+    <result column="ispay" property="ispay" jdbcType="VARCHAR" />
+    <result column="fbiztype" property="fbiztype" jdbcType="VARCHAR" />
+    <result column="Fnursing_homeID" property="fnursinghomeid" jdbcType="TIMESTAMP" />
+    <result column="foldmanid" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="fperiod" property="fperiod" jdbcType="INTEGER" />
+    <result column="fmoun" property="fmoun" jdbcType="INTEGER" />
+	<result column="fcostitem" property="fcostitem" jdbcType="VARCHAR" />
+	<result column="fitemid" property="fitemid" jdbcType="VARCHAR" />
+	<result column="farpaymentamount" property="farpaymentamount" jdbcType="DECIMAL" />
+	<result column="fparentid" property="fparentid" jdbcType="VARCHAR" />
+	<result column="foldmanname" property="foldmanName" jdbcType="VARCHAR" />
+	<result column="period" property="period" jdbcType="VARCHAR" />
+	<result column="fpaymentamount" property="fpaymentamount" jdbcType="DECIMAL" />
+	<result column="payamount" property="payamount" jdbcType="DECIMAL" />
+	<result column="paymentType" property="paymentType" jdbcType="VARCHAR" />
+  </resultMap>
+	
+	
+  <!-- 显示老人应缴费明细返回列 -->
+   <resultMap id="ViewListMap" type="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    <id column="fid" property="fid" jdbcType="VARCHAR" />
+    <result column="FoldmanID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FoldManStatusID" property="foldmanStatus" jdbcType="VARCHAR" />
+    <result column="FRoomName" property="foldmanRoom" jdbcType="TIMESTAMP" />
+    <result column="FoldManTypeID" property="foldmanType" jdbcType="VARCHAR" />
+    <result column="FoldmanName" property="foldmanName" jdbcType="VARCHAR" />
+    <result column="FcheckinTime" property="fcheckinTime" jdbcType="TIMESTAMP" />
+	<result column="FOldManIDnSex" property="foldmanSex" jdbcType="VARCHAR" />
+  </resultMap>    
+  
+  <!-- 查询老人ID获得老人当期的应缴费费用项目 -->
+  <sql id="View_List" >
+    payb.FoldmanID, oldman.FoldmanName,oldman.fid,room.FRoomName,fperiod
+  </sql>  
+  
+    <sql id="where">
+  	<where>
+  		  dc.DC_ID=111
+  		 <if test="foldmanName !=null and foldmanName !=''">
+  		 	and oldman.FoldmanName=#{foldmanName}
+  		 </if>
+  		 <if test="foldmanStatus !=null and foldmanStatus !=''">
+  		 	and oldman.FoldManStatusID=#{foldmanStatus}
+  		 </if>
+  		 <if test="roomName !=null and roomName !=''">
+  		 	and room.froomname=#{roomName}
+  		 </if>
+  		 <if test="nursingLevel !=null and nursingLevel !=''">
+  		 	and oldman.FnursingLevel = #{nursingLevel}
+  		 </if>
+  		 <!-- <if test="chargeStandardId !=null and chargeStandardId !=''">
+  		 	and paye.FitemID=#{chargeStandardId}
+  		 </if> -->
+  		 <if test="startDate !=null and startDate !=''">
+  		 	and DATE(oldman.FcheckinTime) &gt;= #{startDate}
+  		 </if>
+  		 <if test="endDate !=null and endDate !=''">
+  		 	and DATE(oldman.FcheckinTime)  &lt;= #{endDate}
+  		 </if>
+  		 <if test="startDateOut !=null and startDateOut !=''">
+  		 	and DATE(oldman.FcheckoutTime) &gt;= #{startDateOut}
+  		 </if>
+  		 <if test="endDateOut !=null and endDateOut !=''">
+  		 	and DATE(oldman.FcheckoutTime)  &lt;= #{endDateOut}
+  		 </if>
+  	</where>
+  </sql>
+  
+   <!-- 查询老人的应缴费费用项目,用于列表界面 -->
+  <select id="QueryList" resultMap="ViewListMap" >     
+ 		select
+ 		distinct oldman.Fid as FoldmanID, oldman.FoldmanName,dc.DC_VALUE as FoldManStatusID,oldman.FoldManTypeID,
+ 		oldman.FOldManIDnSex,oldman.fcheckinTime,
+ 		CONCAT(build.FBuildingName,'#',room.froomname,'#',bed.FBedNumber) AS FRoomName
+    	from t_oldman_main oldman
+      	 left outer join t_room room on oldman.FroomID=room.FID
+      	 LEFT OUTER JOIN t_building build ON oldman.FbuildingID =build.FID
+         LEFT OUTER JOIN t_bed bed ON oldman.FbedID=bed.FID
+         LEFT OUTER JOIN data_dictionary dc ON oldman.FoldManStatusID=dc.DC_ID
+      	 <include refid="where"></include>
+ 	   <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> 
+  </select>
+  
+  <select id="getTotalSize" resultType="java.lang.Integer" >
+     select
+		count(distinct(oldman.fid))
+    	from t_oldman_main oldman
+      	 left outer join t_room room on oldman.FroomID=room.FID
+      	 LEFT OUTER JOIN t_building build ON oldman.FbuildingID =build.FID
+         LEFT OUTER JOIN t_bed bed ON oldman.FbedID=bed.FID
+         LEFT OUTER JOIN data_dictionary dc ON oldman.FoldManStatusID=dc.DC_ID
+      	 <include refid="where"></include>
+  </select>
+  
+  <select id="getRetirementPoHistorys" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    1 ispay,paye.FID, payb.FBizType,payb.Fnursing_homeID, payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,paye.FArPaymentAmount as payamount,paye.FParentid,oldman.FoldmanName,
+	CONCAT(payb.FPeriod , '年' , payb.FMoun,'月',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_rpayment payb
+      left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+			left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+    where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0  and payb.FBizType=1 and payb.FPeriod &lt; YEAR(oldman.FcheckoutTime) and payb.FMoun &lt; MONTH(oldman.FcheckoutTime)
+	and oldman.fid=#{foldmanid}
+  </select>
+  
+  <select id="getRetirementPoOnes" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+select 
+    1 ispay,paye.FID, payb.FBizType,payb.Fnursing_homeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,-1*paye.FArPaymentAmount as payamount,paye.FParentid,oldman.FoldmanName,
+    CONCAT(payb.FPeriod , '年' , payb.FMoun,'月',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_rpayment payb 
+		  LEFT OUTER JOIN t_fygl_rpaymententry paye 
+		    ON payb.fid = paye.FParentid 
+		  LEFT OUTER JOIN t_oldman_main oldman 
+		    ON payb.FoldmanID = oldman.fid 
+		  LEFT OUTER JOIN T_CHARGE_STANDARD chs 
+		    ON paye.FitemID = chs.fid
+	
+    where paye.FArPaymentAmount - IFNULL(paye.FPayMentAmount, 0) = 0 
+		  AND chs.FRefundType = 1 
+		  AND chs.FChargeCycle = 196 
+		  AND paye.FitemID IN 
+		  (SELECT 
+		    oldc.FManChargeID 
+		  FROM
+		    t_oldman_charge oldc 
+		  WHERE oldc.foldchargestatus = 1) 
+		  and oldman.fid=#{foldmanid}
+  </select>
+  
+  <select id="getRetirementPoPhasicRpays" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    1 ispay,paye.FID, payb.FBizType,payb.Fnursing_homeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,
+    case WHEN datediff(oldman.FcheckinTime,chs.FValidityStartDate)>=0
+        then  (paye.FArPaymentAmount/(datediff(oldman.FcheckinTime,chs.FValidityStartDate) +1))*(datediff(oldman.FcheckoutTime,oldman.FcheckinTime)+1)
+        ELSE (paye.FArPaymentAmount/(datediff(chs.FValidityEndDate,chs.FValidityStartDate)+1))*(datediff(oldman.FcheckoutTime,chs.FValidityStartDate)+1)
+     end payamount,
+   paye.FParentid,oldman.FoldmanName,
+   
+    CONCAT(payb.FPeriod , '年' , payb.FMoun,'月 ',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_rpayment payb
+      left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+		<!-- left outer join t_oldman_charge oldcharge  on oldman.fid=oldcharge.FOldManID -->
+			left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+    where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0  
+          and chs.FRefundType=1
+          and  chs.FChargeCycle=16 
+		  and payb.FBizType=1
+<!--           and oldman.FcheckoutTime &gt;=chs.FValidityStartDate
+          and oldman.FcheckoutTime &lt;=chs.FValidityEndDate -->
+          and oldman.FcheckoutTime &gt;=chs.FChrgeStartDate
+          and oldman.FcheckoutTime &lt;=chs.FChrgeStopDate
+		  and oldman.fid=#{foldmanid}
+  </select>
+  
+  <select id="getRetirementPoMounLoopRpays" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    1 ispay,paye.FID, payb.FBizType,payb.Fnursing_homeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,
+    case WHEN datediff(str_to_date(CONCAT(DATE_FORMAT(oldman.FcheckinTime,'%Y-%m'),'-01'),'%Y-%m-%d') ,
+                       str_to_date(CONCAT(DATE_FORMAT(oldman.FcheckoutTime,'%Y-%m'),'-01'),'%Y-%m-%d'))=0
+
+        then  (paye.FArPaymentAmount/(nursing.days-(datediff(oldman.FcheckinTime,date_add(date_add(last_day(oldman.FcheckoutTime),interval 1 day),interval -1 month)
+									))))*(datediff(oldman.FcheckoutTime,oldman.FcheckinTime)+1)
+        ELSE (paye.FArPaymentAmount/nursing.days)*(datediff(oldman.FcheckoutTime,oldman.FcheckinTime))
+     end payamount,
+   paye.FParentid,oldman.FoldmanName,
+    CONCAT(payb.FPeriod , '年' , payb.FMoun,'月',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_rpayment payb
+      left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+			left outer join 
+         (select t1.fid,
+						case when FChargeModeID=184 or FChargeModeID=185 then 30
+
+						when FChargeModeID=186 then  DAYOFMONTH(last_day(t0.FcheckoutTime)) end days  
+					from t_oldman_main t0 LEFT JOIN t_sys_nursinghome t1 on t0.FNursing_homeID=t1.FID 
+						where t0.FID=#{foldmanid}) nursing on oldman.FNursing_homeID=nursing.FID
+
+
+	left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+   where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0  
+        and chs.FRefundType=1
+        and  chs.FChargeCycle=15 
+	      and payb.FBizType=1
+        and  payb.FPeriod=YEAR(oldman.FcheckoutTime) and payb.FMoun=MONTH(oldman.FcheckoutTime)
+        and oldman.fid=#{foldmanid} 
+  </select>
+  
+  <select id="getRetirementPoPhasicPays" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    2 ispay,paye.FID, 0 FBizType,payb.FnursinghomeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,
+    case WHEN datediff(oldman.FcheckinTime,chs.FValidityStartDate)>=0
+        then  (paye.FArPaymentAmount/(datediff(chs.FValidityStartDate,oldman.FcheckinTime)+1))*(datediff(chs.FValidityEndDate,oldman.FcheckoutTime))
+        ELSE (paye.FArPaymentAmount/(datediff(chs.FValidityStartDate,chs.FValidityEndDate)))*(datediff(chs.FValidityEndDate,oldman.FcheckoutTime))
+     end payamount,
+   paye.FParentid,oldman.FoldmanName,
+   
+    CONCAT('退',payb.FPeriod , '年' , payb.FMoun,'月 ',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_payment payb
+      left outer join t_fygl_paymententry paye on payb.fid=paye.FParentid
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+			left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+    where paye.FArPaymentAmount &gt;0  
+          and chs.FRefundType=1
+          and  chs.FChargeCycle=16 
+
+          <!-- and oldman.FcheckoutTime &gt;=chs.FValidityStartDate
+          and oldman.FcheckoutTime &lt;=chs.FValidityEndDate -->
+          and oldman.FcheckoutTime &gt;=chs.FChrgeStartDate
+          and oldman.FcheckoutTime &lt;=chs.FChrgeStopDate
+		  and oldman.fid=#{foldmanid}
+  </select>
+  
+  <select id="getRetirementPoMounLoopPays" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    2 ispay,paye.FID, 0 FBizType,payb.FnursinghomeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,
+    case WHEN datediff(str_to_date(CONCAT(DATE_FORMAT(oldman.FcheckinTime,'%Y-%m'),'-01'),'%Y-%m-%d') ,
+                       str_to_date(CONCAT(DATE_FORMAT(oldman.FcheckoutTime,'%Y-%m'),'-01'),'%Y-%m-%d'))=0
+
+        then  (-1*paye.FArPaymentAmount/(nursing.days-(datediff(oldman.FcheckinTime,date_add(date_add(last_day(oldman.FcheckoutTime),interval 1 day),interval -1 month)
+									))))*(datediff(oldman.FcheckoutTime,oldman.FcheckinTime)+1)
+
+        ELSE (-1*paye.FArPaymentAmount/nursing.days)*(nursing.days-(datediff(oldman.FcheckinTime,date_add(date_add(last_day(oldman.FcheckoutTime),interval 1 day),interval -1 month)
+									))+1)
+     end payamount,
+   paye.FParentid,oldman.FoldmanName,
+    CONCAT('退',payb.FPeriod , '年' , payb.FMoun,'月',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_payment payb
+      left outer join t_fygl_paymententry paye on payb.fid=paye.FParentid
+
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+			left outer join 
+         (select t1.fid,
+						case when FChargeModeID=184 or FChargeModeID=185 then 30
+
+						when FChargeModeID=186 then  DAYOFMONTH(last_day(t0.FcheckoutTime)) end days  
+					from t_oldman_main t0 LEFT JOIN t_sys_nursinghome t1 on t0.FNursing_homeID=t1.FID 
+						where t0.FID=#{foldmanid}) nursing on oldman.FNursing_homeID=nursing.FID
+
+
+	left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+   where paye.FArPaymentAmount &gt;0  
+        and chs.FRefundType=1
+        and  chs.FChargeCycle=15 
+
+        and  payb.FPeriod=YEAR(oldman.FcheckoutTime) and payb.FMoun=MONTH(oldman.FcheckoutTime)
+        and oldman.fid=#{foldmanid}  
+  </select>
+  
+  <select id="getRetirementPoReductions" parameterType="com.channelsoft.ems.expenses.retirement.po.RetirementPo" resultMap="RetirementMap">
+  	select 
+    1 ispay,paye.FID, payb.FBizType,payb.Fnursing_homeID,   payb.FoldmanID, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FitemID,paye.FArPaymentAmount,paye.FParentid,oldman.FoldmanName,
+	CONCAT(payb.FPeriod , '年' , payb.FMoun,'月',chs.FChrgeName) as period,chs.FChrgeName AS paymentType
+
+    from t_fygl_rpayment payb
+      left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+			left outer join T_CHARGE_STANDARD chs on paye.FitemID=chs.fid
+	
+    where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0  and payb.FBizType=2 
+	and oldman.fid=#{foldmanid}
+  </select>
+  
+  <update id="updateOldmanStatus" parameterType="java.util.Map">
+  		update t_oldman_main set FoldManStatusID=#{status}
+  		where fid=#{foldmanid}
+  </update>
+</mapper>

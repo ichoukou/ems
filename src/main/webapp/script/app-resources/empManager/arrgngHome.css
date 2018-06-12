@@ -1,0 +1,99 @@
+
+.divtops {
+    text-align: center;
+}
+ li {
+    border-left: 1px solid #ddd;
+}
+.licolfsd {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    float: left;
+    line-height: 20px;
+    margin: 0 5px 10px 5px;
+    white-space: nowrap;
+    word-break: keep-all;
+    border: 1px solid #e66618;
+    width: 57px;
+    height: 61px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-family: ����;
+    overflow: hidden;
+}
+.three_class {
+	padding-left:40px;
+	padding-right:40px;
+}
+.three_class li .divbottoms {
+    margin: 0;
+    padding: 0;
+    background-color: #e66618;
+    text-align: center;
+    height: 40px;
+    color: white;
+    border-radius: 0px 0px 3px 3px;
+}
+
+/* .three_class li {
+    border-left: 1px solid #ddd;
+} */
+
+.pcls {
+    border-bottom: 1px solid white;
+    height: 20px;
+}
+.three_class li .divbottoms p {
+    margin: 0;
+    padding: 0;
+    color: white;
+    height: 20px;
+}
+.subnav_left{
+    padding-left: 15px;
+    position: relative;
+    border: 1px solid #DDD;
+    margin: 0 0 10px 10px;
+}
+
+.buildnamecl {
+    font-size: 16px;
+    font-weight: bold;
+    height: 30px;
+    margin-bottom: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.subnav_item {
+    padding: 5px 0;
+}
+.three_class1 {
+    border-bottom: 1px dotted #ddd;
+    height: auto !important;
+    margin-top: -50px;
+    min-height: 24px;
+    overflow: hidden;
+    padding: 8px 0 8px 70px;
+    list-style: none;
+    padding-left:40px;
+	padding-right:40px;
+}
+.three_class1 li .divbottoms {
+    margin: 0;
+    padding: 0;
+    background-color: #e66618;
+    text-align: center;
+    height: 40px;
+    color: white;
+    border-radius: 0px 0px 3px 3px;
+}
+.three_class1 li .divbottoms p {
+    margin: 0;
+    padding: 0;
+    color: white;
+    height: 20px;
+}
+/* .three_class1 li {
+    border-left: 1px solid #ddd;
+}
+ */
+

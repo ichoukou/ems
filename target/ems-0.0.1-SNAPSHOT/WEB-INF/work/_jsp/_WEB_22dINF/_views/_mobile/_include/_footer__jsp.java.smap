@@ -1,0 +1,15 @@
+SMAP
+_footer__jsp.java
+JSP
+*S JSP
+*F
++ 1 footer.jsp
+WEB-INF/views/mobile/include/footer.jsp
+*L
+1#1:54
+19#1,2:55,2
+20#1:58
+24#1,2:59,2
+25#1:62
+30#1:63
+*E

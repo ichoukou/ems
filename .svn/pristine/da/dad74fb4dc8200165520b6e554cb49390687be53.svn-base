@@ -1,0 +1,509 @@
+/**
+ * Created by wangjs on 2017/2/15.
+ */
+/**
+ * Created by wanjs on 2017/1/12.
+ */
+$(function () {
+    //1.初始化Table
+    var oTable = new TableInit();
+    oTable.Init();
+
+    var oTable2 = new TableInit2();
+    oTable2.Init();
+
+    var oTable3 = new TableInit3();
+    oTable3.Init();
+});
+// 老人费用显示列表
+var TableInit3=function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+        $('#tb_omChargeAll').bootstrapTable({
+            url: 'query.do',   //请求后台的URL（*）
+            method: 'get',      //请求方式（*）
+            toolbar: '#toolbar',    //工具按钮用哪个容器
+            striped: true,      //是否显示行间隔色
+            cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,     //是否显示分页（*）
+            // sortable: true,      //是否启用排序
+            // sortName:"id",
+            // sortOrder: "asc",     //排序方式
+            queryParams: oTableInit.queryParams,//传递参数（*）
+            sidePagination: "server",   //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,      //初始化加载第一页，默认第一页
+            pageSize: 5,      //每页的记录行数（*）
+            pageList: [5,10, 25, 50, 100],  //可供选择的每页的行数（*）
+            search: false,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: false,
+            searchOnEnterKey:false,
+            // showColumns: true,     //是否显示所有的列
+            // showRefresh: true,     //是否显示刷新按钮
+            // minimumCountColumns: 2,    //最少允许的列数
+            clickToSelect: true,    //是否启用点击选中行
+            height: 350,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",      //每一行的唯一标识，一般为主键列
+            // showToggle:true,     //是否显示详细视图和列表视图的切换按钮
+            cardView: false,     //是否显示详细视图
+            // detailView: true,     //是否显示父子表
+            columns: [{
+                radio: true
+            }, {
+                field: 'foldManName',
+                title: '老人',
+                align: "center",
+            }, {
+                field: 'fID',
+                title: '序号',
+                align: "center",
+            }, {
+                field: 'fOldChargeStatus',
+                title: '收费项目状态',
+                align: "center",
+                formatter:function(value){
+                    if(value=="0"){
+                        return '<span style="color:#00ff00">待收费</span>'
+                    }else if(value=="1"){
+                        return '<span style="color:#0000cc">已收费</span>'
+                    }else if(value=="2"){
+                        return '<span style="color:#FF0000">停止收费</span>'
+                    }
+                }
+            }, {
+                field: 'fChrgeType',
+                title: '费用类型',
+                align: "center",
+            }, {
+                field: 'fChrgeName',
+                title: '费用名称',
+                align: "center",
+            }, {
+                field: 'fChargePrice',
+                title: '单价',
+                align: "center",
+            }, {
+                field: 'fChargeStartTime',
+                title: '收费开始时间',
+                align: "center",
+            }, {
+                field: 'fChargeEndTime',
+                title: '收费结束时间',
+                align: "center",
+            } ],
+            onLoadSuccess: function () {
+                hebing();
+            }
+        });
+    };
+
+    //得到查询的参数
+    oTableInit.queryParams = function (params) {
+        var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            pageSize: params.limit, //页面大小
+            page: params.offset, //页码
+            // sortOrder:this.sortOrder,
+            // name: $("#searchName").val(),
+            // value: $("#searchValue").val()
+        };
+        return temp;
+    };
+    return oTableInit;
+};
+
+//合并编号相同的项
+function hebing() {
+    var trlist=$("#tb_omChargeAll  tbody tr");
+    var beging=0;
+    var end=0;
+    var number=0;
+    var tdlist;
+    for(var i=0;i<trlist.size();i++)
+    {
+        tdlist=trlist.eq(i).find(' td ');
+        if(number==tdlist.eq(1).html())
+        {
+            end=i;
+            if(end==(trlist.size()-1))
+            {
+                tdlist=trlist.eq(beging).find(' td ');
+                tdlist.eq(0).attr("rowspan",end-beging+1);
+                tdlist.eq(1).attr("rowspan",end-beging+1);
+                // tdlist.eq(2).attr("rowspan",end-beging+1);
+                // tdlist.eq(3).attr("rowspan",end-beging+1);
+                // tdlist.eq(4).attr("rowspan",end-beging+1);
+                // tdlist.eq(5).attr("rowspan",end-beging+1);
+
+                for(var j=(beging+1);j<=end;j++)
+                {
+                    tdlist=trlist.eq(j).find(' td ');
+                    tdlist.eq(0).css('display','none');
+                    tdlist.eq(1).css('display','none');
+                    // tdlist.eq(2).css('display','none');
+                    // tdlist.eq(3).css('display','none');
+                    // tdlist.eq(4).css('display','none');
+                    // tdlist.eq(5).css('display','none');
+
+                }
+            }
+        }
+        else{
+            number=tdlist.eq(1).html();
+            if((end-beging)>0)
+            {
+                tdlist=trlist.eq(beging).find(' td ');
+                tdlist.eq(0).attr("rowspan",end-beging+1);
+                tdlist.eq(1).attr("rowspan",end-beging+1);
+                // tdlist.eq(2).attr("rowspan",end-beging+1);
+                // tdlist.eq(3).attr("rowspan",end-beging+1);
+                // tdlist.eq(4).attr("rowspan",end-beging+1);
+                // tdlist.eq(5).attr("rowspan",end-beging+1);
+
+                for(var j=(beging+1);j<=end;j++)
+                {
+                    tdlist=trlist.eq(j).find(' td ');
+                    tdlist.eq(0).css('display','none');
+                    tdlist.eq(1).css('display','none');
+                    // tdlist.eq(2).css('display','none');
+                    // tdlist.eq(3).css('display','none');
+                    // tdlist.eq(4).css('display','none');
+                    // tdlist.eq(5).css('display','none');
+                }
+            }
+            beging=i;
+            end=i;
+        }
+    }
+}
+
+//收费标准列表
+var TableInit2=function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+        $('#table_chargeStandard').bootstrapTable({
+            url:contextPath+ '/charge/queryCharge.do',   //请求后台的URL（*）
+            method: 'get',      //请求方式（*）
+            toolbar: '#toolbar',    //工具按钮用哪个容器
+            striped: true,      //是否显示行间隔色
+            cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            // pagination: true,     //是否显示分页（*）
+            queryParams: oTableInit.queryParams,//传递参数（*）
+            sidePagination: "server",   //分页方式：client客户端分页，server服务端分页（*）
+            // pageNumber:1,      //初始化加载第一页，默认第一页
+            // pageSize: 5,      //每页的记录行数（*）
+            // pageList: [5,10, 25, 50, 100],  //可供选择的每页的行数（*）
+            search: false,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: false,
+            searchOnEnterKey:false,
+            // showColumns: true,     //是否显示所有的列
+            // showRefresh: true,     //是否显示刷新按钮
+            // minimumCountColumns: 2,    //最少允许的列数
+            clickToSelect: true,    //是否启用点击选中行
+            height: 300,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",      //每一行的唯一标识，一般为主键列
+            // showToggle:true,     //是否显示详细视图和列表视图的切换按钮
+            cardView: false,     //是否显示详细视图
+            // detailView: true,     //是否显示父子表
+            columns: [{
+                radio: true
+            }, {
+                field: 'fID',
+                title: '序号',
+                align: "center",
+            }, {
+                field: 'fChrgeType',
+                title: '费用类型',
+                align: "center",
+            },  {
+                field: 'fChrgeName',
+                title: '费用名称',
+                align: "center",
+            }, {
+                field: 'fPrice',
+                title: '单价',
+                align: "center",
+            }, {
+                field: 'fUnit',
+                title: '单位',
+                align: "center",
+            } ]
+        });
+    };
+
+    //得到查询的参数
+    oTableInit.queryParams = function (params) {
+        var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            pageSize: params.limit, //页面大小
+            page: params.offset, //页码
+            // name: $("#searchName").val(),
+            // value: $("#searchValue").val()
+        };
+        return temp;
+    };
+    return oTableInit;
+};
+// 老人添加费用时的列表
+var TableInit=function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+        $('#tb_omCharge').bootstrapTable({
+            url: 'getList.do',   //请求后台的URL（*）
+            method: 'get',      //请求方式（*）
+            toolbar: '#toolbar',    //工具按钮用哪个容器
+            striped: true,      //是否显示行间隔色
+            cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: false,     //是否显示分页（*）
+            queryParams: oTableInit.queryParams,//传递参数（*）
+            sidePagination: "server",   //分页方式：client客户端分页，server服务端分页（*）
+            // pageNumber:1,      //初始化加载第一页，默认第一页
+            // pageSize: 5,      //每页的记录行数（*）
+            // pageList: [5,10, 25, 50, 100],  //可供选择的每页的行数（*）
+            search: false,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: false,
+            searchOnEnterKey:false,
+            // showColumns: true,     //是否显示所有的列
+            // showRefresh: true,     //是否显示刷新按钮
+            // minimumCountColumns: 2,    //最少允许的列数
+            clickToSelect: true,    //是否启用点击选中行
+            height: 300,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",      //每一行的唯一标识，一般为主键列
+            // showToggle:true,     //是否显示详细视图和列表视图的切换按钮
+            cardView: false,     //是否显示详细视图
+            // detailView: true,     //是否显示父子表
+            columns: [{
+                checkbox:true
+                // radio: true
+            }, {
+                field: 'fID',
+                title: '序号',
+                align: "center",
+            }, {
+                field: 'fOldChargeStatus',
+                title: '收费项目状态',
+                align: "center",
+                formatter:function(value){
+                    if(value=="0"){
+                        return '<span style="color:#00ff00">待收费</span>'
+                    }else if(value=="1"){
+                        return '<span style="color:#0000cc">已收费</span>'
+                    }else if(value=="2"){
+                        return '<span style="color:#FF0000">停止收费</span>'
+                    }
+                }
+            }, {
+                field: 'fChrgeType',
+                title: '费用类型',
+                align: "center",
+            }, {
+                field: 'fChrgeName',
+                title: '费用名称',
+                align: "center",
+            }, {
+                field: 'fChargePrice',
+                title: '单价',
+                align: "center",
+            }, {
+                field: 'fChargeStartTime',
+                title: '收费开始时间',
+                align: "center",
+            }, {
+                field: 'fChargeEndTime',
+                title: '收费结束时间',
+                align: "center",
+            } ]
+        });
+    };
+
+    //得到查询的参数
+    oTableInit.queryParams = function (params) {
+        var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            // pageSize: params.limit, //页面大小
+            // page: params.offset, //页码
+            fOldManID:$("#oldMan_Id").val()
+        };
+        return temp;
+    };
+    return oTableInit;
+};
+
+function selectOldMan(){
+    $('#oldManModal').modal('show')
+}
+
+function getOldManWithPhoto(temp){
+    $("#oldMan_Id").val(temp.getAttribute("selectOmId"));
+    $("#oldManName").val(temp.getAttribute("selectName"));
+    $('#oldManModal').modal('hide')
+    queryOldManCharge()
+}
+
+
+//查询
+function queryOldManCharge(){
+    $.ajax({
+        url:contextPath+"/manCharge/getList.do",
+        type:"post",
+        data:{
+            fOldManID:$("#oldMan_Id").val()
+        },
+        success:function(data) {
+            $('#tb_omCharge').bootstrapTable('refresh', {url: 'getList.do'});
+        }
+    });
+}
+
+$("#selected_left").click(function(){
+    var carrentItem = $("#table_chargeStandard").bootstrapTable('getSelections');
+    if(carrentItem[0]){
+        var oldManName=$("#oldManName").val();
+        if(oldManName==""){
+            alert("请选择老人")
+        }else{
+            // var now=new Date();
+            // var chargeTime=now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate()+" "+now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+            $.ajax({
+                url:contextPath+"/manCharge/addOldManCharge.do",
+                type:"post",
+                async:false,
+                data:{
+                    fOldChargeStatus:"0",
+                    fOldManID:$("#oldMan_Id").val(),
+                    fManChargeID:carrentItem[0].fID,
+                    fChargePrice:carrentItem[0].fPrice,
+                    // fChargeStartTime:chargeTime,
+                    fOldManName:oldManName
+                },
+                success:function(data) {
+                    $('#tb_omCharge').bootstrapTable('refresh', {url: 'getList.do'});
+                    $('#tb_omChargeAll').bootstrapTable('refresh', {url: 'getList.do'});
+                }
+            });
+        }
+    }else{
+        alert("请选择要缴费的项目")
+    }
+});
+
+$("#selected_right").click(function(){
+    var carrentItem = $("#tb_omCharge").bootstrapTable('getSelections');
+    if(carrentItem[0]){
+        var oldManName=$("#oldManName").val();
+        if(oldManName==""){
+            alert("请选择老人")
+        }else{
+            $.ajax({
+                url:contextPath+"/manCharge/delOldManCharge.do",
+                type:"post",
+                async:false,
+                data:{
+                    fID:carrentItem[0].fID
+                },
+                success:function(data) {
+                    $('#tb_omCharge').bootstrapTable('refresh', {url: 'getList.do'});
+                    $('#tb_omChargeAll').bootstrapTable('refresh', {url: 'getList.do'});
+                }
+            });
+        }
+    }else{
+        alert("请选择取消缴费的项目")
+    }
+});
+// 0待收费
+//1已收费
+//2停止收费
+function updChargeStatus(chargeStatus,flag){
+    var oldManName=$("#oldManName").val();
+    if(oldManName==""){
+        alert("请选择老人")
+    }else {
+        var carrentItem = $("#tb_omCharge").bootstrapTable('getSelections');
+        if (carrentItem[0]) {
+            var selectArray = new Array();
+            var chargeStatus = chargeStatus;
+            var oldManId = $("#oldMan_Id").val();
+            //新增是添加费用开始时间，停止时添加费用结束时间
+            var now=new Date();
+            var chargeTime=now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
+            for (var i = 0; i < carrentItem.length; i++) {
+                selectArray[i] = chargeStatus + "=" + carrentItem[i].fID + "=" + oldManId+"="+chargeTime;
+            }
+
+            $.ajax({
+                url: contextPath + "/manCharge/updChargeStatus.do",
+                type: "post",
+                async: false,
+                traditional: true,
+                data: {
+                    selectDataList: selectArray
+                },
+                success: function (data) {
+                    //新增老人的時候添加应缴表
+                    if (flag) {
+                        addOldManPayment();
+                    } else {
+                        alert("停止已选费用成功");
+                    }
+                    $('#tb_omCharge').bootstrapTable('refresh', {url: 'getList.do'});
+                }
+            })
+        } else {
+            alert("请选择数据")
+        }
+    }
+}
+
+function addOldManPayment(){
+    $.ajax({
+        url:contextPath+"/pay/omPayment.do",
+        type:"post",
+        async:false,
+        data:{
+            fnursing_homeID:"3434",
+            fnumber:"1234567890",
+            fstatus:"1",
+            foldmanID:$("#oldMan_Id").val()
+        },
+        success:function(data) {
+            getOldManPaymentId();
+        }
+    });
+}
+
+function getOldManPaymentId(){
+    $.ajax({
+        url:contextPath+"/pay/queryLast.do",
+        type:"post",
+        async:false,
+        success:function(data) {
+            var parentId=data.rows[0].fID;
+            addOldManPaymentEntry(parentId)
+        }
+    });
+}
+
+function addOldManPaymentEntry(parentId) {
+    // $("#b1").attr("disabled",true)
+    //批量新增收费项目
+    var chargeArr=new Array();
+
+    var carrentItem = $("#tb_omCharge").bootstrapTable('getSelections');
+    for(var i=0;i<carrentItem.length;i++){
+        chargeArr[i]=parentId+"="+carrentItem[i].fID+"="+carrentItem[i].fChargePrice;
+    }
+
+    $.ajax({
+        url:contextPath+"/paymentEntry/addPaymentEntry.do",
+        type:"post",
+        async:false,
+        traditional: true,
+        data:{
+            chargeArrPara:chargeArr
+        },
+        success:function(data) {
+            alert("老人费用添加成功")
+        }
+    });
+    // closeModal();
+}

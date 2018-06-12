@@ -1,0 +1,711 @@
+var respon;
+var length;
+var alldata;
+var check=[];
+var nowCheck=[];
+var empid;
+var havebed;
+var havebedlength;
+function updateRoom(){
+	  	//alert("终极方法id:"+empid);//员工原来的id
+	  	//员工现在的id
+	  	//循环出现在被选中的id
+	  	for(var i=0;i<alldata.total;i++){
+	  		 (function(i){  			
+	  			 $("#newcheck"+alldata.rows[i].Roomid+":checked").each(function (){
+	  				nowCheck+=$(this).val()+',';	
+	  			 });					         								      
+	         })(i);
+	      }
+
+	      console.log(nowCheck==''?'':nowCheck.substring(0,nowCheck.length-1))
+
+	  	$.ajax({
+			url:contextPath+"/arrg/addRoom.do",
+			type:"post",
+			dataType:'json', 
+			data:{
+				empid:empid,
+				nowCheck:nowCheck==''?'':nowCheck.substring(0,nowCheck.length-1)
+			},
+			success:function(data) {
+				AdminRoom();
+				draw();
+
+				$('#tb_arrgHome').bootstrapTable('refresh',{url: 'query.do'});
+
+				setAlert(data.message,"操作成功");
+			}	
+		});	
+	  	
+
+	    //清空
+	  	nowCheck='';
+	  }
+
+//直接把modal数据画出来
+function draw(a){
+
+	 $.ajax({
+		 url:contextPath+"/arrg/queryAllRoom.do",
+		 type:"post",
+		 dataType:'json',
+		 success:function(Alldata) {
+			 alldata=Alldata;
+
+			 //样式花下来
+			 //对大厦进行赋值  占用房间数目
+			 for(var a=0;a<Alldata.total;a++){
+				 for(var b=0;b<havebedlength;b++){
+					 if(Alldata.rows[a].Roomid==havebed[b].FID){
+						 Alldata.rows[a].manNum=havebed[b].num;
+					 }
+				 }
+			 }
+
+			 var modal=$("div.modal-body");
+			 modal.html('');
+			 var e='';
+			 for(var i=0;i<Alldata.total;i++) {
+
+				 if(Alldata.rows[i].BuName==a){
+					 if (i != 0) {
+
+							 if (Alldata.rows[i].BuName == Alldata.rows[i - 1].BuName) {
+
+								 //在这里面进行循环楼层
+								 if (Alldata.rows[i].floorName == Alldata.rows[i - 1].floorName) {
+									 e += ' <li class="licolfsd" id="roomclass6">'
+										 + ' <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+										 + ' <div class="divbottoms">'
+										 + ' <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+										 + ' <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '" data-build="2" data-floof="3" title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+										 + ' </div> </li>'
+
+
+								 } else {
+
+									 e += '</ul></div></div><div style="width: 100%;">'
+										 + '<div style="width: 10%">'
+										 + '<input type="checkbox" id="Floors_2_4" class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" value="4" title="2" >' + Alldata.rows[i].floorName + '<input type="hidden" name="floor" id="floor+楼层id" value="4">'
+										 + '</div>'
+										 + '<div style="margin: 0 0 40px 0">'
+										 + '<ul class="three_class1">'
+										 + '<li class="licolfsd" id="roomclass6">'
+										 + ' <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+										 + ' <div class="divbottoms">'
+										 + ' <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+										 + ' <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2" data-floof="3" title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+										 + ' </div> </li>'
+
+
+								 }
+
+
+							 } else {
+								 e += '</ul></div></div></div></div><div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+									 + '<div class="buildnamecl">'
+									 + ' <input type="checkbox" class="firsttrees" name="' + Alldata.rows[i].Buid + '号楼" >' + Alldata.rows[i].BuName
+									 + '</div>'
+									 + '<div class="subnav_item">'
+									 + '  <div style="width: 100%;">'
+									 + '              <div style="width: 10%">'
+									 + '                  <input type="checkbox"  class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+									 + '              </div>'
+									 + '              <div style="margin: 0 0 40px 0">'
+									 + '                  <ul class="three_class1">    '
+									 + '                              <li class="licolfsd" id="roomclass6">'
+									 + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+									 + '                                  <div class="divbottoms">'
+									 + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+									 + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+									 + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签 <div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+								 +'<div class="buildnamecl">'
+								 + ' <input type="checkbox" class="firsttrees" >' + Alldata.rows[i].BuName
+								 + '</div>'
+								 + '<div class="subnav_item">'
+								 + '  <div style="width: 100%;">'
+								 + '              <div style="width: 10%">'
+								 + '                  <input type="checkbox" class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+								 + '              </div>'
+								 + '              <div style="margin: 0 0 40px 0">'
+								 + '                  <ul class="three_class1">    '
+								 + '                              <li class="licolfsd" id="roomclass6">'
+								 + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+								 + '                                  <div class="divbottoms">'
+								 + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+								 + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '"  id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+								 + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签
+							 }
+
+
+					 } else
+					 {
+
+							 e += ' <div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+								 + '<div class="buildnamecl">'
+								 + ' <input type="checkbox" class="firsttrees" name="' + Alldata.rows[i].Buid + '号楼" >' + Alldata.rows[i].BuName
+								 + '</div>'
+								 + '<div class="subnav_item">'
+								 + '  <div style="width: 100%;">'
+								 + '              <div style="width: 10%">'
+								 + '                  <input type="checkbox"   class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+								 + '              </div>'
+								 + '              <div style="margin: 0 0 40px 0">'
+								 + '                  <ul class="three_class1">    '
+								 + '                              <li class="licolfsd" id="roomclass6">'
+								 + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+								 + '                                  <div class="divbottoms">'
+								 + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+								 + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+								 + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签
+
+
+
+
+
+					 }
+				 }
+
+
+				 }
+			 modal.html(e);
+
+
+			 //checkbox全选事件  通过     name="Alldata.rows[i].Buid号楼" 操控   name="Alldata.rows[i].BuName"
+			 //获取大厦的id
+			 var buid=[];
+			 var floor=[];
+			 for(var i=0;i<Alldata.total;i++){
+				 buid[i]=Alldata.rows[i].Buid;
+				 floor[i]=Alldata.rows[i].Buid+'-'+Alldata.rows[i].floorName;
+			 }
+
+			 Array.prototype.unique2 = function(){
+				 this.sort(); //先排序
+				 var res = [this[0]];
+				 for(var i = 1; i < this.length; i++){
+					 if(this[i] !== res[res.length - 1]){
+						 res.push(this[i]);
+					 }
+				 }
+				 return res;
+			 }
+			 buid.unique2();
+
+
+
+
+			 //楼层和房间联动事件
+			 for(var i=0;i<floor.length;i++){
+				 (function(i){
+
+					 $("input[name="+Alldata.rows[i].Buid+"号楼]").click(function(){
+
+						 $("input[name="+Alldata.rows[i].BuName+"]").prop("checked",$(this).prop("checked"));
+						 $(".twotrees"+floor[i]+"").prop("checked",$(this).prop("checked"));
+					 });
+
+
+
+					 $(".twotrees"+floor[i]+"").click(function(){
+
+						 $(".threetrees"+floor[i]+"").prop("checked",$(this).prop("checked"));
+
+					 });
+
+				 })(i);
+			 }
+
+		 }
+
+
+	 });
+ }
+ //直接把员工和对应的房间查出来
+function AdminRoom(){
+	$.ajax({
+		url:contextPath+"/arrg/queryRoom.do",
+		type:"post",
+		dataType:'json',
+		success:function(data) {
+			respon=data.rows;
+			length=data.total;
+			$.ajax({
+				url:contextPath+"/arrg/queryHaveBed.do",
+				type:"post",
+				dataType:'json',
+				success:function(data) {
+
+					havebed=data.rows;
+					havebedlength=data.total;
+
+					for(var i=0;i<length;i++){
+						for(var j=0;j<havebedlength;j++){
+							if(respon[i].Roomid==havebed[j].FID){
+
+								respon[i].fmanNumber=havebed[j].num;
+							}
+						}
+
+					}
+
+
+
+
+				}
+			});
+
+
+		}
+	});
+}
+
+$(document).ready(function(){
+	//刚进来发出一个请求 直接把modal里面数据画出来
+
+	AdminRoom();
+
+});
+
+function Room(value){
+
+	var e="";
+	var buName=[];//所有的员工对应的buname找出来
+	//取出员工指定的大楼 按照顺序的
+	for(var i=0;i<length;i++){
+		if(respon[i].FStaffID==value){
+			buName[i]=respon[i].BuName;
+		}
+	}
+	for(var i=0;i<length;i++){
+		if(respon[i].FStaffID==value){
+			if(buName[i]==buName[i-1]){
+				e+="<li id="+respon[i].Roomid+" class='licolfsd'>"
+					+"<div class='divtops'>"+respon[i].fRoomName+"</div>"
+					+"<div class='divbottoms' >"
+					+" <p class='pcls'>"+respon[i].fbedCount+"张床</p>"
+					+"<p class='pcls'>住"+respon[i].fmanNumber+"人</p></div></li>"
+				e+=buName[i]==buName[i+1]?"":"</ul></div><br clear='left'/>";
+			}else{
+				e+="<div style='float:left; margin-left: 20px;border: 1px solid #999;padding:5px;margin-top: 10px;'>"
+					+"<p style='background-color:#e7e7e7;color:#3b3b3b; height:23px;text-align: center;'>"+buName[i]+"</p>"
+					+"<ul class='three_class'>"
+				e+="<li id="+respon[i].Roomid+" class='licolfsd'>"
+					+"<div class='divtops'>"+respon[i].fRoomName+"</div>"
+					+"<div class='divbottoms' >"
+					+" <p class='pcls'>"+respon[i].fbedCount+"张床</p>"
+					+"<p class='pcls'>住"+respon[i].fmanNumber+"人</p></div></li>"
+				e+=buName[i]==buName[i+1]?"":"</ul></div><br clear='left'/>";
+
+			}
+		}
+	}
+	e+="</ul></div><br clear='left'/>";
+
+	return e;
+	//根据员工id查询分配的房间
+
+
+}
+
+$(function () {
+	 //1.初始化Table
+	 var oTable = new TableInit();
+	 oTable.Init();
+});
+
+var TableInit = function () {
+var oTableInit = new Object();
+//初始化Table
+oTableInit.Init = function () {
+ $('#tb_arrgHome').bootstrapTable({
+  url: 'query.do',   //请求后台的URL（*）
+  method: 'get',      //请求方式（*）
+  toolbar: '#toolbar',    //工具按钮用哪个容器
+  striped: true,      //是否显示行间隔色
+  cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+  pagination: false,     //是否显示分页（*）
+  sortable: false,      //是否启用排序
+  sortOrder: "asc",     //排序方式
+  queryParams: oTableInit.queryParams,//传递参数（*）
+  sidePagination: "server",   //分页方式：client客户端分页，server服务端分页（*）
+  pageNumber:1,      //初始化加载第一页，默认第一页
+  pageSize: 10,      //每页的记录行数（*）
+  pageList: [10, 25, 50, 100],  //可供选择的每页的行数（*）
+  search: false,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+  strictSearch: true,
+  showColumns: true,     //是否显示所有的列
+  showRefresh: true,     //是否显示刷新按钮
+  minimumCountColumns: 2,    //最少允许的列数
+  clickToSelect: true,    //是否启用点击选中行
+ // height: 450,      //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+  uniqueId: "ID",      //每一行的唯一标识，一般为主键列
+  showToggle:true,     //是否显示详细视图和列表视图的切换按钮
+  cardView: false,     //是否显示详细视图
+    //是否显示父子表<td>部门员工</td>
+
+ columns: [{
+	 
+		    field: 'fStaffName',
+		    title:'部门员工',
+		    width:'130px',
+		    align: 'center',
+
+         } ,{
+               
+           field: 'sum',
+           title:'分配房间数',
+           width:'40px',
+           align: 'center',
+         
+	     },{
+               
+           field: 'bedSum',
+           title:'饱和人数',
+           width:'50px',
+           align: 'center',
+           
+         
+       },{
+               
+       field: 'fStaffID',
+       title:'实际人数',
+       align: 'center',
+       width:'50px',
+	 formatter:function(value,row,index){
+		 //已经被占用房间
+		 var status="";
+		 $.ajax({
+			 url:contextPath+"/arrg/queryHave.do",
+			 type:"post",
+			 async:false,
+			 data:{
+				 empid:value,
+
+			 },
+			 success:function(data){
+				 status=data.total==0?'':data.rows[0].sum;
+
+			 }
+		 })
+		 return status;
+	 }
+        } ,{
+       
+           field: 'fStaffID',
+           title:'已分房间',
+           align: 'center',  
+           width:'450px', 
+           formatter:function(value,row,index){
+			//已结存在的房间
+	        return Room(value);
+      }
+        },{
+            
+            field: 'fStaffID',
+            title:'重新分配',
+            align: 'center',    
+            width:'50px', 
+            formatter:function(value,row,index){
+
+
+
+
+
+					e='<div id="toolbar" class="btn-group">'
+           +'<button  id="btn_add'+value+'"  type="button" class="btn btn-success">'
+   	       +'<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>重新分配</button>'  	       
+
+
+				if(Room(value)=="</ul></div><br clear='left'/>"){
+					return '<div id="toolbar" class="btn-group">'
+						+'<button  id="btn_add'+value+'"  type="button" class="btn btn-primary">'
+						+'<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>开始分配</button>';
+				}else{
+					return e;
+				}
+
+
+
+
+               }
+            }],  
+       onLoadSuccess: function(data){
+		   console.log("大的查询")
+           console.log(data);
+
+
+
+    	   //获取员工id 通过对员工的id进行循环  将员工相对应的 房间roomid存入数组传入modal里面。
+    	  for(var j=0;j<data.total;j++){
+    		   (function(j){
+
+    		   $('#btn_add'+data.rows[j].fStaffID+'').click(function(){
+				   //点击显示
+				 //  draw(data.rows[j].fBuildingName);
+				   //
+				   $.ajax({
+					   url:contextPath+"/arrg/queryAllRoom.do",
+					   type:"post",
+					   dataType:'json',
+					   success:function(Alldata) {
+						   alldata=Alldata;
+
+
+					   //对大厦进行赋值  占用房间数目
+						  for(var a=0;a<Alldata.total;a++){
+							   for(var b=0;b<havebedlength;b++){
+								   if(Alldata.rows[a].Roomid==havebed[b].FID){
+									   Alldata.rows[a].manNum=havebed[b].num;
+								   }
+							   }
+						   }
+
+
+						   var modal=$("div.modal-body");
+						   modal.html('');
+						   var e='';
+						   for(var i=0;i<Alldata.total;i++) {
+
+							   if(Alldata.rows[i].BuName==data.rows[j].fBuildingName){
+								   if (i != 0) {
+
+									   if (Alldata.rows[i].BuName == Alldata.rows[i - 1].BuName) {
+
+										   //在这里面进行循环楼层
+										   if (Alldata.rows[i].floorName == Alldata.rows[i - 1].floorName) {
+											   e += ' <li class="licolfsd" id="roomclass6">'
+												   + ' <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+												   + ' <div class="divbottoms">'
+												   + ' <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+												   + ' <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '" data-build="2" data-floof="3" title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+												   + ' </div> </li>'
+
+
+										   } else {
+
+											   e += '</ul></div></div><div style="width: 100%;">'
+												   + '<div style="width: 10%">'
+												   + '<input type="checkbox" id="Floors_2_4" class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" value="4" title="2" >' + Alldata.rows[i].floorName + '<input type="hidden" name="floor" id="floor+楼层id" value="4">'
+												   + '</div>'
+												   + '<div style="margin: 0 0 40px 0">'
+												   + '<ul class="three_class1">'
+												   + '<li class="licolfsd" id="roomclass6">'
+												   + ' <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+												   + ' <div class="divbottoms">'
+												   + ' <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+												   + ' <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2" data-floof="3" title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+												   + ' </div> </li>'
+
+
+										   }
+
+
+									   } else {
+										   e += '</ul></div></div></div></div><div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+											   + '<div class="buildnamecl">'
+											   + ' <input type="checkbox" class="firsttrees" name="' + Alldata.rows[i].Buid + '号楼" >' + Alldata.rows[i].BuName
+											   + '</div>'
+											   + '<div class="subnav_item">'
+											   + '  <div style="width: 100%;">'
+											   + '              <div style="width: 10%">'
+											   + '                  <input type="checkbox"  class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+											   + '              </div>'
+											   + '              <div style="margin: 0 0 40px 0">'
+											   + '                  <ul class="three_class1">    '
+											   + '                              <li class="licolfsd" id="roomclass6">'
+											   + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+											   + '                                  <div class="divbottoms">'
+											   + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+											   + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+											   + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签 <div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+										   +'<div class="buildnamecl">'
+										   + ' <input type="checkbox" class="firsttrees" >' + Alldata.rows[i].BuName
+										   + '</div>'
+										   + '<div class="subnav_item">'
+										   + '  <div style="width: 100%;">'
+										   + '              <div style="width: 10%">'
+										   + '                  <input type="checkbox" class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+										   + '              </div>'
+										   + '              <div style="margin: 0 0 40px 0">'
+										   + '                  <ul class="three_class1">    '
+										   + '                              <li class="licolfsd" id="roomclass6">'
+										   + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+										   + '                                  <div class="divbottoms">'
+										   + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+										   + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '"  id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+										   + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签
+									   }
+
+
+								   } else
+								   {
+
+									   e += ' <div class="subnav_left" style="border: 1px solid #DDD; padding-left: 20px;padding-right: 20px;margin-top: 10px;padding-top: 20px;">'
+										   + '<div class="buildnamecl">'
+										   + ' <input type="checkbox" class="firsttrees" name="' + Alldata.rows[i].Buid + '号楼" >' + Alldata.rows[i].BuName
+										   + '</div>'
+										   + '<div class="subnav_item">'
+										   + '  <div style="width: 100%;">'
+										   + '              <div style="width: 10%">'
+										   + '                  <input type="checkbox"   class="twotrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '">' + Alldata.rows[i].floorName
+										   + '              </div>'
+										   + '              <div style="margin: 0 0 40px 0">'
+										   + '                  <ul class="three_class1">    '
+										   + '                              <li class="licolfsd" id="roomclass6">'
+										   + '                                  <div class="divtops">' + Alldata.rows[i].fRoomName + '</div>'
+										   + '                                  <div class="divbottoms">'
+										   + '                                      <p class="pcls">' + Alldata.rows[i].bedCount + '张床</p>'
+										   + '                                      <p class="pcls">住' + Alldata.rows[i].manNum + '人<input type="checkbox" class="threetrees' + Alldata.rows[i].Buid + '-' + Alldata.rows[i].floorName + '" name="' + Alldata.rows[i].BuName + '" id="newcheck' + Alldata.rows[i].Roomid + '" value="' + Alldata.rows[i].Roomid + '"  data-build="2"  title="3" name="IdCollection" style="margin-right: -14px; margin-bottom: 5px;"></p>'
+										   + '                                  </div></li>';//添加一个封闭标签 如果楼的id号不一样添加这个标签
+
+
+
+
+
+								   }
+							   }
+
+
+						   }
+
+
+
+						   modal.html(e==""?"请添加房间,该大厦没有房间":e);
+
+
+						   //checkbox全选事件  通过     name="Alldata.rows[i].Buid号楼" 操控   name="Alldata.rows[i].BuName"
+						   //获取大厦的id
+						   var buid=[];
+						   var floor=[];
+						   for(var i=0;i<Alldata.total;i++){
+							   buid[i]=Alldata.rows[i].Buid;
+							   floor[i]=Alldata.rows[i].Buid+'-'+Alldata.rows[i].floorName;
+						   }
+
+						   Array.prototype.unique2 = function(){
+							   this.sort(); //先排序
+							   var res = [this[0]];
+							   for(var i = 1; i < this.length; i++){
+								   if(this[i] !== res[res.length - 1]){
+									   res.push(this[i]);
+								   }
+							   }
+							   return res;
+						   }
+						   buid.unique2();
+
+
+
+
+						   //楼层和房间联动事件
+						   for(var i=0;i<floor.length;i++){
+							   (function(i){
+
+								   $("input[name="+Alldata.rows[i].Buid+"号楼]").click(function(){
+
+									   $("input[name="+Alldata.rows[i].BuName+"]").prop("checked",$(this).prop("checked"));
+									   $(".twotrees"+floor[i]+"").prop("checked",$(this).prop("checked"));
+								   });
+
+
+
+								   $(".twotrees"+floor[i]+"").click(function(){
+
+									   $(".threetrees"+floor[i]+"").prop("checked",$(this).prop("checked"));
+
+								   });
+
+							   })(i);
+						   }
+
+						   //员工的t1_id 和 btu_add(value)相对应的 获取员工t1_id 对应的roomid
+						   for(var i=0;i<length;i++){
+							   if(respon[i].FStaffID==data.rows[j].fStaffID){
+								   check[i]=respon[i].Roomid;
+							   }
+						   }
+						   empid=data.rows[j].fStaffID;
+						   //移除所有选择
+						   $(":checkbox").removeAttr("checked");
+
+						   for(i=0;i<check.length;i++){
+							   $("#newcheck"+check[i]+"").prop("checked","true");
+						   }
+						   $('#updateModal').modal();//模态框显示出来
+						   check=[];//每次点击之后都要清空
+
+						   //通过遍历respon得出相应员工的
+
+					   }
+
+
+				   });
+				   //draw
+				   //
+
+                     //仅显示指定员工所在的大厦
+
+
+
+    			/*   //员工的t1_id 和 btu_add(value)相对应的 获取员工t1_id 对应的roomid
+    			   for(var i=0;i<length;i++){
+    				   if(respon[i].FStaffID==data.rows[j].fStaffID){
+    					   check[i]=respon[i].Roomid;
+    				   }
+    			   }
+    			   console.log("都哪些被选中："+check);
+    			   empid=data.rows[j].fStaffID;
+    		       //移除所有选择
+    				$(":checkbox").removeAttr("checked");
+    				
+    				   for(i=0;i<check.length;i++){
+    					   $("#newcheck"+check[i]+"").prop("checked","true");  
+        			   }
+    	      	  	 $('#updateModal').modal();//模态框显示出来
+    	      		 check=[];//每次点击之后都要清空
+    	      	  
+    	      	  	  //通过遍历respon得出相应员工的 	*/
+    	         })
+    		   })(j);  
+    	   }
+    	 
+    		 
+     
+     	
+      }
+ 
+ 
+
+ });
+};
+
+  
+
+//得到查询的参数
+oTableInit.queryParams = function (params) {
+ var temp = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+	   pageSize: params.limit, //页面大小
+	   page: params.offset + 1, //页码
+	 
+ };
+ return temp;
+};
+
+return oTableInit;
+
+};
+
+
+
+
+
+
+function closeModal() {
+	$("#addName").val("");
+	$("#addValue").val("");
+	$("#updateName").val("");
+	$("#updateValue").val("");
+}
+

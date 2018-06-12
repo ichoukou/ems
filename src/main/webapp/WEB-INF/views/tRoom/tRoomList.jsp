@@ -1,0 +1,99 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: wangjs
+  Date: 2016/12/4
+  Time: 19:21
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房间管理</title>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="${pageContext.request.contextPath}/script/lib/H+/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/script/lib/H+/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/script/lib/H+/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/script/lib/H+/css/animate.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/script/lib/H+/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/script/lib/bootstrap-treeview/bootstrap-treeview.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        var contextPath = "${pageContext.request.contextPath}";
+    </script>
+</head>
+<style>
+    .fixed-table-body {
+        height: 390px;
+    }
+
+</style>
+
+
+<body class="gray-bg">
+<div style="float: left;">
+
+    <div id="tree"></div>
+</div>
+
+
+<div class="panel-body" style="width:84%;display: inline-block;">
+
+
+        <div id="toolbar" class="btn-group">
+
+            <button id="btn_add" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal" onclick="btnOpen()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+            </button>
+
+            <button  type="button" class="btn btn-success"  onclick="gotoRoomUpdate()">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+            </button>
+
+            <button id="btn_delete" type="button" class="btn btn-default" onclick="gotoDelete()">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+            </button>
+        </div>
+
+        <%--根据菜单树查询房间--%>
+        <input type="hidden" id="treeSerachFloorId">
+        <input type="hidden" id="treeSerachBuildingId">
+        <table id="tb_Room"></table>
+
+</div>
+
+<!-- 控制修改按钮 -->
+<button id="update_btn" type="button" class="btn btn-default" data-toggle="modal" data-target="#updateModal" style="display:none">
+</button>
+
+
+<!-- 全局js -->
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/jquery.min.js?v=2.1.4"></script>
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="${pageContext.request.contextPath}/script/my97DatePicker/WdatePicker.js"></script>
+
+<!--Bootstrap treeview-->
+<script src="${pageContext.request.contextPath}/script/lib/bootstrap-treeview/bootstrap-treeview.js"></script>
+
+<!-- 自定义js -->
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/content.js?v=1.0.0"></script>
+<script src="${pageContext.request.contextPath}/script/app-resources/t-room/tRoom.js"></script>
+
+<script src="${pageContext.request.contextPath}/script/app-resources/common/alert.js"></script>
+
+<!-- Bootstrap table -->
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+<script src="${pageContext.request.contextPath}/script/lib/H+/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript">
+    var contextPath = "${pageContext.request.contextPath}";
+</script>
+<jsp:include  page="./tRoomAdd.jsp"/>
+<jsp:include  page="./tRoomUpdate.jsp"/>
+<jsp:include  page="../alert.jsp"/>
+</body>
+</html>

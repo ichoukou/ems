@@ -1,0 +1,62 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: wangjs
+  Date: 2017/1/4
+  Time: 19:49
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<!-- Modal -->
+<form id="form_validate" class="form-horizontal">
+    <div class="modal fade" id="oldManModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:1057px;">
+            <div class="modal-content" style="height: 449px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">选择老人</h4>
+                </div>
+                <div id="myDiv" class="modal-body" style="display: inline-block;background: #f4f4f4">
+
+                    <%--<div id="div1" style="background-color: #FFF;height: 149px;width: 300px">--%>
+
+                    <%--</div>--%>
+
+                    <%--<div style="display: inline-block;background-color: #FFF;height: 149px;width: 300px">--%>
+                        <%--<img id="img_2" src="/ems/img/a3.jpg" style="height: 117px;width: 99px;">--%>
+                        <%--<span style="display: inline-block;">--%>
+                            <%--<ul>--%>
+                                <%--<li>--%>
+                                    <%--姓名：大号龙--%>
+                                <%--</li>--%>
+                                <%--<li>--%>
+                                    <%--性别：男--%>
+                                <%--</li>--%>
+
+                            <%--</ul>--%>
+                        <%--</span>--%>
+                    <%--</div>--%>
+
+                    <%--<div style="display: inline-block;background-color: #FFF;height: 149px;width: 300px">--%>
+                        <%--<img id="img_3" src="/ems/img/a3.jpg" style="height: 117px;width: 99px;">--%>
+                        <%--<span style="display: inline-block;">--%>
+                            <%--<ul>--%>
+                                <%--<li>--%>
+                                    <%--姓名：大号龙--%>
+                                <%--</li>--%>
+                                <%--<li>--%>
+                                    <%--性别：男--%>
+                                <%--</li>--%>
+
+                            <%--</ul>--%>
+                        <%--</span>--%>
+                    <%--</div>--%>
+
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>

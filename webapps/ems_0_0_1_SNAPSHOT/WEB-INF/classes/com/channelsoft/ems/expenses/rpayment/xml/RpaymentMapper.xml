@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.expenses.rpayment.mapper.RpaymentMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    <id column="FID" property="fid" jdbcType="INTEGER" />
+    <result column="Fnursing_homeID" property="fnursingHomeid" jdbcType="VARCHAR" />
+    <result column="FAuditorID" property="fauditorid" jdbcType="VARCHAR" />
+    <result column="FAuditTime" property="faudittime" jdbcType="TIMESTAMP" />
+    <result column="FCreatorID" property="fcreatorid" jdbcType="VARCHAR" />
+    <result column="FCreateTime" property="fcreatetime" jdbcType="TIMESTAMP" />
+    <result column="FModifierID" property="fmodifierid" jdbcType="VARCHAR" />
+    <result column="FModificationTime" property="fmodificationtime" jdbcType="TIMESTAMP" />
+    <result column="FRemarks" property="fremarks" jdbcType="VARCHAR" />
+    <result column="Fnumber" property="fnumber" jdbcType="VARCHAR" />
+    <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+    <result column="FoldmanID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FPaymentDate" property="fpaymentdate" jdbcType="TIMESTAMP" />
+    <result column="FPeriod" property="fperiod" jdbcType="INTEGER" />
+    <result column="FMoun" property="fmoun" jdbcType="INTEGER" />
+    <result column="fbiztype" property="fbiztype" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 查询老人应缴费明细返回列 -->
+   <resultMap id="QueryListMap" type="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    <id column="FID" property="fid" jdbcType="INTEGER" />
+    <result column="Fnursing_homeID" property="fnursingHomeid" jdbcType="VARCHAR" />
+    <result column="FAuditorID" property="fauditorid" jdbcType="VARCHAR" />
+    <result column="FAuditTime" property="faudittime" jdbcType="TIMESTAMP" />
+    <result column="FCreatorID" property="fcreatorid" jdbcType="VARCHAR" />
+    <result column="FCreateTime" property="fcreatetime" jdbcType="TIMESTAMP" />
+    <result column="FModifierID" property="fmodifierid" jdbcType="VARCHAR" />
+    <result column="FModificationTime" property="fmodificationtime" jdbcType="TIMESTAMP" />
+    <result column="FRemarks" property="fremarks" jdbcType="VARCHAR" />
+    <result column="Fnumber" property="fnumber" jdbcType="VARCHAR" />
+    <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+    <result column="FoldmanID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FPaymentDate" property="fpaymentdate" jdbcType="TIMESTAMP" />
+    <result column="FPeriod" property="fperiod" jdbcType="INTEGER" />
+    <result column="FMoun" property="fmoun" jdbcType="INTEGER" />
+    <result column="fbiztype" property="fbiztype" jdbcType="VARCHAR" />
+    
+    <result column="FoldmanName" property="foldmanName" jdbcType="VARCHAR" />
+    
+    <result column="FCostItem" property="fcostitem" jdbcType="VARCHAR" />
+    <result column="FArPaymentAmount" property="fArPaymentAmount" jdbcType="DECIMAL" />
+    <result column="FPayMentAmount" property="FPayMentAmount" jdbcType="DECIMAL" />
+	<result column="FParentid" property="fparentid" jdbcType="VARCHAR" />
+	<result column="Period" property="period" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <!-- 显示老人应缴费明细返回列 -->
+   <resultMap id="ViewListMap" type="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    <id column="fid" property="fid" jdbcType="VARCHAR" />
+    <result column="FoldmanID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FoldManStatusID" property="foldmanStatus" jdbcType="VARCHAR" />
+    <result column="FRoomName" property="foldmanRoom" jdbcType="TIMESTAMP" />
+    <result column="FoldManTypeID" property="foldmanType" jdbcType="VARCHAR" />
+    <result column="FoldmanName" property="foldmanName" jdbcType="VARCHAR" />
+    <result column="FcheckinTime" property="fcheckinTime" jdbcType="TIMESTAMP" />
+	<result column="FOldManIDnSex" property="foldmanSex" jdbcType="VARCHAR" />
+	<result column="fbiztype" property="fbiztype" jdbcType="VARCHAR" />
+  </resultMap>    
+  
+  
+
+  
+     
+  <sql id="Base_Column_List" >
+    FID, Fnursing_homeID, FAuditorID, FAuditTime, FCreatorID, FCreateTime, FModifierID, 
+    FModificationTime, FRemarks, Fnumber, Fstatus, FoldmanID, FPaymentDate, FPeriod, 
+    FMoun,FCostItem,FArPaymentAmount,FPayMentAmount,FParentid,FoldmanName
+  </sql>
+  
+  <!-- 查询老人ID获得老人当期的应缴费费用项目 -->
+  <sql id="View_List" >
+    payb.FoldmanID, oldman.FoldmanName,oldman.fid,room.FRoomName,fperiod
+  </sql>  
+  
+
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from t_fygl_rpayment
+    where FID = #{fid,jdbcType=INTEGER}
+  </select>
+  
+  <sql id="where">
+  	<where>
+  		 paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0
+  		 and (dc.DC_ID=46 or dc.DC_ID=47)
+  		 <if test="foldmanName !=null and foldmanName !=''">
+  		 	and oldman.FoldmanName=#{foldmanName}
+  		 </if>
+  		 <if test="foldmanStatus !=null and foldmanStatus !=''">
+  		 	and oldman.FoldManStatusID=#{foldmanStatus}
+  		 </if>
+  		 <if test="roomName !=null and roomName !=''">
+  		 	and room.froomname=#{roomName}
+  		 </if>
+  		 <if test="nursingLevel !=null and nursingLevel !=''">
+  		 	and oldman.FnursingLevel = #{nursingLevel}
+  		 </if>
+  		 <if test="chargeStandardId !=null and chargeStandardId !=''">
+  		 	and paye.FitemID=#{chargeStandardId}
+  		 </if>
+  		 <if test="startDate !=null and startDate !=''">
+  		 	and DATE(oldman.FcheckinTime) &gt;= #{startDate}
+  		 </if>
+  		 <if test="endDate !=null and endDate !=''">
+  		 	and DATE(oldman.FcheckinTime)  &lt;= #{endDate}
+  		 </if>
+  	</where>
+  </sql>
+  
+   <!-- 查询老人的应缴费费用项目,用于列表界面 -->
+  <select id="QueryList" resultMap="ViewListMap" >
+     select
+ 		distinct(payb.FoldmanID) as FoldmanID, oldman.FoldmanName,dc.DC_VALUE as FoldManStatusID,oldman.FoldManTypeID,
+ 		oldman.FOldManIDnSex,oldman.fcheckinTime,payb.fid,
+ 		CONCAT(build.FBuildingName,'#',room.froomname,'#',bed.FBedNumber) AS FRoomName,payb.fbiztype
+    	from t_fygl_rpayment payb
+      	 left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      	 left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+      	 left outer join t_room room on oldman.FroomID=room.FID
+      	 LEFT OUTER JOIN t_building build ON oldman.FbuildingID =build.FID
+         LEFT OUTER JOIN t_bed bed ON oldman.FbedID=bed.FID
+         LEFT OUTER JOIN data_dictionary dc ON oldman.FoldManStatusID=dc.DC_ID
+         
+		<include refid="where"></include>     
+		 	 
+      	 group by payb.FoldmanID
+ 	   ORDER BY payb.FCreateTime desc
+ 	   <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> 
+  </select>
+  
+  <select id="getTotalSize" resultType="java.lang.Integer" >
+     select
+		count(distinct(payb.FoldmanID))
+    	from t_fygl_rpayment payb
+      	 left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      	 left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+      	 left outer join t_room room on oldman.FroomID=room.FID
+      	 LEFT OUTER JOIN t_building build ON oldman.FbuildingID =build.FID
+         LEFT OUTER JOIN t_bed bed ON oldman.FbedID=bed.FID
+         LEFT OUTER JOIN data_dictionary dc ON oldman.FoldManStatusID=dc.DC_ID
+      	 <!-- where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0) &lt;&gt; 0 -->
+      	 <include refid="where"></include>
+  </select>
+  
+
+   <sql id="oldmanrpayment_List" >
+    payb.FID, payb.Fnursing_homeID, payb.FAuditorID, payb.FAuditTime, payb.FCreatorID, payb.FCreateTime, payb.FModifierID, 
+    payb.FModificationTime, payb.FRemarks, payb.Fnumber, payb.Fstatus, payb.FoldmanID, payb.FPaymentDate, payb.FPeriod, 
+    payb.FMoun,paye.FCostItem,paye.FArPaymentAmount,paye.FPayMentAmount,paye.FParentid,oldman.FoldmanName,CONCAT(payb.FPeriod , '年' , payb.FMoun,'月应缴费') as period
+  </sql>  
+  <!-- 查询老人ID获得老人当期的应缴费费用项目，用于编辑界面 -->
+  
+   <select id="selectByOldManId" resultMap="QueryListMap" parameterType="java.lang.String" >
+    select 
+    <include refid="oldmanrpayment_List" />
+    from t_fygl_rpayment payb
+      left outer join t_fygl_rpaymententry paye on payb.fid=paye.FParentid
+      left outer join t_oldman_main oldman on payb.FoldmanID=oldman.fid
+    where paye.FArPaymentAmount-IFNULL(paye.FPayMentAmount,0)>0
+      and  payb.FoldmanID = #{foldmanid,jdbcType=STRING}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_fygl_rpayment
+    where FID = #{fid,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    insert into t_fygl_rpayment (FID, Fnursing_homeID, FAuditorID, 
+      FAuditTime, FCreatorID, FCreateTime, 
+      FModifierID, FModificationTime, FRemarks, 
+      Fnumber, Fstatus, FoldmanID, 
+      FPaymentDate, FPeriod, FMoun
+      )
+    values (#{fid,jdbcType=INTEGER}, #{fnursingHomeid,jdbcType=VARCHAR}, #{fauditorid,jdbcType=VARCHAR}, 
+      #{faudittime,jdbcType=TIMESTAMP}, #{fcreatorid,jdbcType=VARCHAR}, #{fcreatetime,jdbcType=TIMESTAMP}, 
+      #{fmodifierid,jdbcType=VARCHAR}, #{fmodificationtime,jdbcType=TIMESTAMP}, #{fremarks,jdbcType=VARCHAR}, 
+      #{fnumber,jdbcType=VARCHAR}, #{fstatus,jdbcType=VARCHAR}, #{foldmanid,jdbcType=VARCHAR}, 
+      #{fpaymentdate,jdbcType=TIMESTAMP}, #{fperiod,jdbcType=INTEGER}, #{fmoun,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    insert into t_fygl_rpayment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID,
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID,
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime,
+      </if>
+      <if test="fcreatorid != null" >
+        FCreatorID,
+      </if>
+      <if test="fcreatetime != null" >
+        FCreateTime,
+      </if>
+      <if test="fmodifierid != null" >
+        FModifierID,
+      </if>
+      <if test="fmodificationtime != null" >
+        FModificationTime,
+      </if>
+      <if test="fremarks != null" >
+        FRemarks,
+      </if>
+      <if test="fnumber != null" >
+        Fnumber,
+      </if>
+      <if test="fstatus != null" >
+        Fstatus,
+      </if>
+      <if test="foldmanid != null" >
+        FoldmanID,
+      </if>
+      <if test="fpaymentdate != null" >
+        FPaymentDate,
+      </if>
+      <if test="fperiod != null" >
+        FPeriod,
+      </if>
+      <if test="fmoun != null" >
+        FMoun,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="fnursingHomeid != null" >
+        #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanid != null" >
+        #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fpaymentdate != null" >
+        #{fpaymentdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fperiod != null" >
+        #{fperiod,jdbcType=INTEGER},
+      </if>
+      <if test="fmoun != null" >
+        #{fmoun,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    update t_fygl_rpayment
+    <set >
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fcreatorid != null" >
+        FCreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      </if>
+      <if test="fcreatetime != null" >
+        FCreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fmodifierid != null" >
+        FModifierID = #{fmodifierid,jdbcType=VARCHAR},
+      </if>
+      <if test="fmodificationtime != null" >
+        FModificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fremarks != null" >
+        FRemarks = #{fremarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        Fnumber = #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        Fstatus = #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="foldmanid != null" >
+        FoldmanID = #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fpaymentdate != null" >
+        FPaymentDate = #{fpaymentdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fperiod != null" >
+        FPeriod = #{fperiod,jdbcType=INTEGER},
+      </if>
+      <if test="fmoun != null" >
+        FMoun = #{fmoun,jdbcType=INTEGER},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.expenses.rpayment.po.Rpayment" >
+    update t_fygl_rpayment
+    set Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      FCreatorID = #{fcreatorid,jdbcType=VARCHAR},
+      FCreateTime = #{fcreatetime,jdbcType=TIMESTAMP},
+      FModifierID = #{fmodifierid,jdbcType=VARCHAR},
+      FModificationTime = #{fmodificationtime,jdbcType=TIMESTAMP},
+      FRemarks = #{fremarks,jdbcType=VARCHAR},
+      Fnumber = #{fnumber,jdbcType=VARCHAR},
+      Fstatus = #{fstatus,jdbcType=VARCHAR},
+      FoldmanID = #{foldmanid,jdbcType=VARCHAR},
+      FPaymentDate = #{fpaymentdate,jdbcType=TIMESTAMP},
+      FPeriod = #{fperiod,jdbcType=INTEGER},
+      FMoun = #{fmoun,jdbcType=INTEGER}
+    where FID = #{fid,jdbcType=INTEGER}
+  </update>
+</mapper>

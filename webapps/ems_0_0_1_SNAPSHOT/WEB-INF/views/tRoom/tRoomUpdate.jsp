@@ -1,0 +1,202 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: wangjs
+  Date: 2016/2/18
+  Time: 19:22
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<style>
+    .col-sm-2{
+        width:13.666667%;
+    }
+</style>
+<!-- Modal -->
+<form id="form_validate" class="form-horizontal">
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 950px">
+            <div class="modal-content" style="height: 990px">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">修改房间</h4>
+                </div>
+
+                <%--<label for="addNursinghomeID" class="col-sm-2 control-label">养老院ID</label>--%>
+                <%--<div class="col-sm-4">--%>
+                <input type="hidden" id="updNursingHomeID" value="3">
+                <input type="hidden" id="updRoomId">
+                <%--</div>--%>
+
+                <div class="form-group row">
+                    <label for="updBuildingID" class="col-sm-2 control-label">大厦名称</label>
+                    <div class="col-sm-4">
+                        <select onblur="updCheck_BuildingID_room()" class="form-control" onchange="getUpdBuildID()" id="updBuildingID"
+                                name="addfBuildingID" style="width:250px;display: inline-block">
+
+                        </select>
+                        <label id="errorUpdBuildingID" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label class="col-sm-2 control-label">楼层名称</label>
+                    <div class="col-sm-4">
+                        <select onblur="updCheck_floorName_room()" class="form-control" id="updFLoorID" name="updFLoorID"
+                                style="width:250px;display: inline-block">
+
+                        </select>
+                        <label id="errorUpdFLoorID" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">房间编码</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="updRoomNumber" name="addfRoomNumber" readonly="readonly"
+                               style="width:250px;display: inline-block">
+                    </div>
+
+                    <label class="col-sm-2 control-label" value="单位">房间名称</label>
+                    <div class="col-sm-4">
+                        <input onblur="updCheck_RoomName_room()" type="text" class="form-control" id="updRoomName"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdRoomName" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label" id="fRoomType" value="房间类型">房间类型</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updRoomType"
+                                style="width:250px;display: inline-block">
+
+                        </select>
+                    </div>
+
+                    <label id="afRoomOrientation" class="col-sm-2 control-label" value="房间朝向">房间朝向</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updRoomOrientation" name="addfRoomOrientation"
+                                style="width:250px;display: inline-block">
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label id="afRoomPrice" class="col-sm-2 control-label" value="房间费">房间费</label>
+                    <div class="col-sm-4">
+                        <input onblur="updCheck_RoomPrice_room()" class="form-control" id="updRoomPrice"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdRoomPrice" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label class="col-sm-2 control-label" value="分值">房间负责人</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updAdministratorsId" name="administratorsId"
+                                style="width:250px;display: inline-block">
+                            <%--<option value="jueye">jueye</option>--%>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">房间床数</label>
+                    <div class="col-sm-4">
+                        <input onblur="updCheck_BedCount_room()" type="text" class="form-control" id="updBedCount"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdBedCount" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label class="col-sm-2 control-label">房间人数</label>
+                    <div class="col-sm-4">
+                        <input onblur="updCheck_ManNumber_room()" type="text" class="form-control" id="updManNumber" name="addfManNumber"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdManNumber" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">房间状态</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updRoomStatus" name="addRoomStatus" style="width:250px;display: inline-block">
+
+                        </select>
+                    </div>
+
+                    <label class="col-sm-2 control-label">房间说明</label>
+                    <div class="col-sm-4">
+                        <textarea class="form-control" name="updRoomExplain" id="updRoomExplain" placeholder="说明"></textarea>
+                    </div>
+                </div>
+
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeModal_Room(1)">关闭</button>
+                    <button type="button" id="roomBtn" class="btn btn-primary"  onclick="updRoom()">修改</button>
+                </div>
+
+
+                <input type="hidden" id="updBedID">
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">床位号</label>
+                    <div class="col-sm-4">
+                        <input onblur="check_updBed_bedNumber()" type="text" class="form-control" id="updBedNumber" name="addfBedNumber"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdBedNumber" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label id="afBedPrice" class="col-sm-2 control-label" value="床费">床费</label>
+                    <div class="col-sm-4">
+                        <input onblur="check_updBed_bedPrice()" class="form-control" id="updBedPrice"
+                               style="width:250px;display: inline-block">
+                        <label id="errorUpdBedPrice" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">护理员</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updAdministratorsIDs" name="addfAdministratorsIDs"
+                                style="width:250px;display: inline-block">
+                            <option value="jueye">jueye</option>
+                        </select>
+                        <label id="errorfManNumber" style="color: red" >&nbsp;&nbsp;&nbsp;</label>
+                        <%--<input class="addRefundType" type="checkbox" name="addRefundType" id="addRefundType" value="1"/>是--%>
+                    </div>
+
+                    <label class="col-sm-2 control-label">床位状态</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="updStatus" name="addfStatus"
+                                style="width:250px;display: inline-block">
+                            <option value="2">空闲</option>
+                            <option value="11">使用</option>
+                            <option value="01">预约</option>
+                            <option value="10">请假</option>
+                        </select>
+                        <%--<label id="errorUpdStatus" style="color: red" >&nbsp;&nbsp;&nbsp;</label>--%>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">床位说明</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="updBedExplain" placeholder="说明"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" onclick="closeUpdBedModal(1)">关闭</button>
+                    <button type="button" class="btn btn-primary" id="bedBtn" onclick="updBed()">确认修改</button>
+                </div>
+
+                <table id="tb_UpdBed"></table>
+            </div>
+        </div>
+
+    </div>
+</form>
+<script src="${pageContext.request.contextPath}/script/app-resources/t-bed/tUpdBed.js"></script>
+<%--<script src="${pageContext.request.contextPath}/script/lib/bootstrap3-editable/js/bootstrap-editable.js"></script>--%>
+
+

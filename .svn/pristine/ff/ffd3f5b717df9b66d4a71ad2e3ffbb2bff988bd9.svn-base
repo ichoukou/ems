@@ -1,0 +1,98 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: wangjs
+  Date: 2017/1/6
+  Time: 15:34
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<!-- Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 1040px; margin-left: 0px; left: 20px;">
+        <div class="modal-content" style="height: 520px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">修改减免</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">老人</label>
+                    <div class="col-sm-4">
+                        <input type="hidden" id="updfOldManID"/>
+                        <input type="text" class="form-control" id="updOldManName" readonly="readonly">
+                        <label id="upd_name_free" style="color: red;width: 250px;height: auto" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label class="col-sm-2 control-label">减免项目</label>
+                    <div class="col-sm-4">
+                        <select onblur="updCheck_FreeItem_free()" class="form-control" id="updfFreeItem" name="updfFreeItem">
+                            <%--<option value="1">房费</option>--%>
+                            <%--<option value="2">餐费</option>--%>
+                            <%--<option value="3">综合服务费</option>--%>
+                        </select>
+                        <label id="upd_Item_free" style="color: red;width: 250px;height: auto" >&nbsp;&nbsp;&nbsp;</label>
+
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">减免数量</label>
+                    <div class="col-sm-3">
+                        <input onblur="updCheck_FreeNumber_free()" type="text" class="form-control"
+                               id="updfFreeNumber" name="updfFreeNumber" placeholder="必填项">
+                        <label id="upd_number_free" style="color: red;width: 250px;height: auto" >&nbsp;&nbsp;&nbsp;</label>
+
+                    </div>
+                    <div class="col-sm-1">
+                        <select class="form-control" id="updUnit" name="updUnit"  style="width:65px">
+
+                        </select>
+                    </div>
+
+                    <label class="col-sm-2 control-label">减免时间</label>
+                    <div class="col-sm-4">
+                        <input  onblur="updCheck_CreateTime_free()" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM'})" type="text" id="updfCreateTime" placeholder="必填项">
+                        <label id="upd_time_free" style="color: red;width: 250px;height: auto" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">减免单价</label>
+                    <div class="col-sm-4">
+                        <input onblur="updCheck_FreePrice_free()" type="text" class="form-control" id="updfFreePrice" name="updfFreePrice" placeholder="必填项">
+                        <label id="upd_price_free" style="color: red;width: 250px;height: auto" >&nbsp;&nbsp;&nbsp;</label>
+                    </div>
+
+                    <label id="aChargeCycle" class="col-sm-2 control-label" value="费用周期">减免总价</label>
+                    <div class="col-sm-4"><%--onkeyup="checkDecimal3(this)" onBlur="checkDecimal3(this)"--%>
+                        <input type="text" class="form-control"  id="updfFreeTotal" name="updfFreeTotal" readonly="readonly">
+                    </div>
+                </div>
+
+                <input type="hidden" id="data_id"/>
+                <input type="hidden" value="era34" id="updfNumber"/>
+                <input type="hidden" value="0" id="updfStatus"/>
+                <input type="hidden" id="updfPaymentID"/>
+                <input type="hidden" value="222" id="updfCreatorID"/>
+                <input type="hidden" value="333" id="updfNursinghomeID"/>
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label">备注
+                    </label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" rows="5" style="resize: none;"
+                                  name="updfExplain" id="updfExplain" placeholder="必填项"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="updOldManFree()">修改</button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.channelsoft.ems.nursing.nursingPlan.mapper.NursingPlanOldManMapper" >
+  <resultMap id="BaseResultMap" type="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" >
+    <id column="FID" property="fid" jdbcType="VARCHAR" />
+    <result column="Fnursing_homeID" property="fnursingHomeid" jdbcType="VARCHAR" />
+    <result column="FAuditorID" property="fauditorid" jdbcType="VARCHAR" />
+    <result column="FAuditTime" property="faudittime" jdbcType="TIMESTAMP" />
+    <result column="FCreatorID" property="fCreatorID" jdbcType="VARCHAR" />
+    <result column="FCreateTime" property="fCreateTime" jdbcType="TIMESTAMP" />
+    <result column="FModifierID" property="fModifierID" jdbcType="VARCHAR" />
+    <result column="FModificationTime" property="fModifierTime" jdbcType="TIMESTAMP" />
+    <result column="FRemarks" property="fRemarks" jdbcType="VARCHAR" />
+    <result column="Fnumber" property="fnumber" jdbcType="VARCHAR" />
+    <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+    <result column="FserviceitemID" property="fserviceitemid" jdbcType="VARCHAR" />
+    <result column="FserviceStartDate" property="fservicestartdate" jdbcType="TIMESTAMP" />
+    <result column="FserviceEndDate" property="fserviceenddate" jdbcType="TIMESTAMP" />
+    <result column="FoldManID" property="foldmanid" jdbcType="VARCHAR" />
+    <result column="FnurseLevelID" property="fnurselevelid" jdbcType="VARCHAR" />
+    <result column="fsecplanExcluddate" property="fsecplanExcluddate" jdbcType="TIMESTAMP" />
+    <result column="Fexecutecycle" property="Fexecutecycle" jdbcType="INTEGER" />
+    <result column="FServiceGroupID" property="fServiceGroupID" jdbcType="VARCHAR" />
+    <result column="serviceGroupName" property="serviceGroupName" jdbcType="VARCHAR" />
+    <result column="FExcludtime" property="fExcludtime" jdbcType="INTEGER" />
+    <result column="FexecuteType" property="fExecuteType" jdbcType="VARCHAR" />
+    <result column="Fexecutecycle" property="fExecutecycle" jdbcType="INTEGER" />
+    <result column="FexecuteQty" property="fExecuteQty" jdbcType="INTEGER" />
+    <result column="Fexecutetime" property="fExecutetime" jdbcType="TIMESTAMP" />
+    <result column="FusedStatus" property="fUsedStatus" jdbcType="VARCHAR" />
+    <result column="Fname" property="fName" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="FEndDate" property="fEndDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+    
+      <resultMap id="ServiceItemBaseResultMap" type="com.channelsoft.ems.nursing.nursingProject.po.NursingProjectPo">
+        <id column="FID" jdbcType="VARCHAR" property="fid"/>
+        <result column="Fnursing_homeID" property="fNursingHomeID" jdbcType="VARCHAR" />
+        <result column="FAuditorID" property="fAuditorID" jdbcType="VARCHAR" />
+        <result column="FAuditTime" property="fAuditTime" jdbcType="TIMESTAMP" />
+        <result column="FCreatorID" property="fCreatorID" jdbcType="VARCHAR" />
+        <result column="FCreateTime" property="fCreateTime" jdbcType="TIMESTAMP" />
+        <result column="FModifierID" property="fModifierID" jdbcType="VARCHAR" />
+        <result column="FModificationTime" property="fModifierTime" jdbcType="TIMESTAMP" />
+        <result column="FRemarks" property="fRemarks" jdbcType="VARCHAR" />
+        <result column="Fnumber" property="fNumber" jdbcType="VARCHAR" />
+        <result column="Fstatus" property="fstatus" jdbcType="VARCHAR" />
+        <result column="FServiceGroupID" property="fServiceGroupID" jdbcType="VARCHAR" />
+        <result column="FexecuteType" property="fExecuteType" jdbcType="VARCHAR" />
+        <result column="Fexecutecycle" property="fExecutecycle" jdbcType="INTEGER" />
+        <result column="FexecuteQty" property="fExecuteQty" jdbcType="INTEGER" />
+        <result column="Fexecutetime" property="fExecutetime" jdbcType="TIMESTAMP" />
+        <result column="FStarteDate" property="fStarteDate" jdbcType="TIMESTAMP" />
+        <result column="FEndDate" property="fEndDate" jdbcType="TIMESTAMP" />
+        <result column="Fname" property="fName" jdbcType="VARCHAR" />
+        <result column="serviceGroupName" property="serviceGroupName" jdbcType="VARCHAR" />
+        <result column="FExcludtime" property="fExcludtime" jdbcType="INTEGER" />
+        <result column="FserviceType" property="fserviceType" jdbcType="VARCHAR" />
+    </resultMap>
+  
+  <sql id="Base_Column_List" >
+    FID, Fnursing_homeID, FAuditorID, FAuditTime, FCreatorID, FCreateTime, FModifierID, 
+    FModificationTime, FRemarks, Fnumber, Fstatus, FserviceitemID, FserviceStartDate, 
+    FserviceEndDate, FoldManID, FnurseLevelID
+  </sql>
+  
+  <select id="queryList" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" resultMap="BaseResultMap">
+        SELECT 
+		 DISTINCT(si.FServiceGroupID) AS FServiceGroupID,
+		 sg.Fname AS serviceGroupName,
+		 sg.FserviceType AS fserviceType
+		FROM
+		  t_kfgl_oldmanserviceitem omsi 
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON omsi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 and FoldManID=#{foldmanid}
+			<if test="fServiceGroupID !=null and fServiceGroupID !=''">
+				and si.FServiceGroupID=#{fServiceGroupID}
+			</if>
+			<if test="fserviceType !=null and fserviceType !=''">
+				and sg.fserviceType=#{fserviceType}
+			</if>
+		</where> 
+		ORDER BY sg.FserviceType 
+       <!-- <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+       </if> -->
+    </select>
+	
+	<select id="getTotalSize" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" resultType="java.lang.Integer">
+        SELECT 
+		  count(DISTINCT(si.FServiceGroupID))
+		FROM
+		  t_kfgl_oldmanserviceitem omsi 
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON omsi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+		<where>
+			1=1 and omsi.FoldManID=#{foldmanid}
+			<if test="fServiceGroupID !=null and fServiceGroupID !=''">
+				and si.FServiceGroupID=#{fServiceGroupID}
+			</if>
+			<if test="fserviceType !=null and fserviceType !=''">
+				and sg.fserviceType=#{fserviceType}
+			</if>
+		</where>  
+    </select>
+  
+  <select id="queryDetailList" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" resultMap="BaseResultMap">
+       SELECT 
+		  si.*,
+		  si.fid as id,
+		  omsi.Fstatus AS FusedStatus,
+		  sg.Fname AS serviceGroupName,
+		  sg.FserviceType AS fserviceType   
+		FROM
+		  t_kfgl_oldmanserviceitem omsi 
+		  LEFT JOIN t_kfgl_serviceitem si 
+		  ON omsi.FserviceitemID=si.FID
+		  LEFT JOIN t_kfgl_servicegroup sg 
+		  ON si.FServiceGroupID=sg.fid
+  
+		 	<where>
+		 		si.fServiceGroupID=#{fServiceGroupID} and omsi.FoldManID=#{foldmanid}
+		 		<if test="fserviceLevels !=null and fserviceLevels !=''">
+		 			and sl.FnurseLevelID=#{fserviceLevels}
+		 		</if>
+		 	</where>
+		 	GROUP BY si.FID
+		 	order by si.FCreateTime desc
+    </select>  
+  
+  <select id="queryOldManList" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo" resultType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo">
+  		SELECT 
+		om.fid AS fid,
+		OM.FoldManName AS fOldManName,
+		om.fOldManIDnSex AS fOldManIDnSex,
+		om.froomID AS froomID,
+		om.FbedID AS fbedID,
+		om.fnursingLevel AS fnursingLevel,
+		dc.DC_VALUE AS fnursingLevelName,
+		om.fPhoto AS fPhoto,
+		r.froomname AS froomName,
+		CONCAT(bd.FBuildingName,'#',r.froomname,'#',b.FBedNumber) AS froomInfo,
+		om.fnursing as fnursing
+	 FROM t_oldman_main om
+	 LEFT JOIN t_room r ON om.FroomID =r.fid
+	 LEFT JOIN t_building bd ON bd.fid=r.FBuildingID
+	 LEFT JOIN t_bed b ON om.FbedID= b.fid
+	  left join data_dictionary dc on om.FnursingLevel=dc.DC_ID
+	 <where>
+	 	1=1
+	 	<if test="fOldManName !=null and fOldManName !='' ">
+       		and OM.FoldManName=#{fOldManName} 
+	     </if>
+	     <if test="froomName !=null and froomName !='' ">
+	       		and r.froomname=#{froomName} 
+	     </if>
+	     <if test="fOldManNumber !=null and fOldManNumber !='' ">
+       			and OM.FoldManNum=#{fOldManNumber} 
+	     </if>
+	     <if test="foldManStatusID !=null and foldManStatusID !='' ">
+	       		and OM.foldManStatusID=#{foldManStatusID} 
+	     </if>
+	     <if test="fcurUserID !=null and fcurUserID !='' ">
+	       		and OM.FroomID in (<include refid="ownerOldMan"></include>) 
+	       		and OM.foldManStatusID='46'
+	     </if> 
+	 </where>
+	 <if test="page !=null and pageSize !=null ">
+       		limit #{page} , #{pageSize} 
+     </if>
+  </select>
+  
+    <select id="queryOldManListNoPage" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo" resultType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo">
+  		SELECT 
+		om.fid AS fid,
+		OM.FoldManName AS fOldManName,
+		om.fOldManIDnSex AS fOldManIDnSex,
+		om.froomID AS froomID,
+		om.FbedID AS fbedID,
+		om.fnursingLevel AS fnursingLevel,
+		dc.DC_VALUE AS fnursingLevelName,
+		om.fPhoto AS fPhoto,
+		r.froomname AS froomName,
+		CONCAT(bd.FBuildingName,'#',r.froomname,'#',b.FBedNumber) AS froomInfo,
+		om.fnursing as fnursing
+	 FROM t_oldman_main om
+	 LEFT JOIN t_room r ON om.FroomID =r.fid
+	 LEFT JOIN t_building bd ON bd.fid=r.FBuildingID
+	 LEFT JOIN t_bed b ON om.FbedID= b.fid
+	 left join data_dictionary dc on om.FnursingLevel=dc.DC_ID
+	 <where>
+	 	1=1
+	 	<if test="fOldManName !=null and fOldManName !='' ">
+       		and OM.FoldManName=#{fOldManName} 
+	     </if>
+	     <if test="froomName !=null and froomName !='' ">
+	       		and r.froomname=#{froomName} 
+	     </if>
+	     <if test="fOldManNumber !=null and fOldManNumber !='' ">
+       			and OM.FoldManNum=#{fOldManNumber} 
+	     </if>
+	     <if test="foldManStatusID !=null and foldManStatusID !='' ">
+	       		and OM.foldManStatusID=#{foldManStatusID} 
+	     </if>
+	     <if test="fcurUserID !=null and fcurUserID !='' ">
+	       		and OM.FroomID in (<include refid="ownerOldMan"></include>) 
+	       		and OM.foldManStatusID='46'
+	     </if>
+	     <if test="searchType !=null and searchType !=''">
+	     		and year(om.FcheckinTime)=year(now()) 
+	     		and month(om.FcheckinTime)=month(now()) 
+	     		and day(om.FcheckinTime)=day(now())
+	     </if> 
+	 </where>
+  </select>
+  
+  <sql id="ownerOldMan">
+  		SELECT 
+	      ah.FHomeID AS roomid 
+	    FROM
+	      s_user u 
+	      INNER JOIN t_arrgng_home ah 
+	        ON u.employ_id = ah.FStaffID 
+	    WHERE u.u_id = #{fcurUserID}
+  </sql>
+  
+  <select id="queryOldManTotal" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo" resultType="java.lang.Integer">
+  		SELECT 
+		count(1)
+	 FROM t_oldman_main om
+	 LEFT JOIN t_room r ON om.FroomID =r.fid
+	 LEFT JOIN t_building bd ON bd.fid=r.FBuildingID
+	 LEFT JOIN t_bed b ON om.FbedID= b.fid
+	  <where>
+	 	1=1
+	 	<if test="fOldManName !=null and fOldManName !='' ">
+       		and OM.FoldManName=#{fOldManName} 
+	     </if>
+	     <if test="froomName !=null and froomName !='' ">
+	       		and r.froomname=#{froomName} 
+	     </if>
+	     <if test="fOldManNumber !=null and fOldManNumber !='' ">
+       			and OM.FoldManNum=#{fOldManNumber} 
+	     </if>
+	     <if test="foldManStatusID !=null and foldManStatusID !='' ">
+	       		and OM.foldManStatusID=#{foldManStatusID} 
+	     </if>
+	     <if test="fcurUserID !=null and fcurUserID !='' ">
+	       		and OM.fid in (<include refid="ownerOldMan"></include>) 
+	     </if> 
+	 </where>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_kfgl_oldmanserviceitem
+    where FID = #{fid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_kfgl_oldmanserviceitem
+    where FID = #{fid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" >
+    insert into t_kfgl_oldmanserviceitem (FID, Fnursing_homeID, FAuditorID, 
+      FAuditTime, FCreatorID, FCreateTime, 
+      FModifierID, FModificationTime, FRemarks, 
+      Fnumber, Fstatus, FserviceitemID, 
+      FserviceStartDate, FserviceEndDate, 
+      FoldManID, FnurseLevelID)
+    values (#{fid,jdbcType=VARCHAR}, #{fnursingHomeid,jdbcType=VARCHAR}, #{fauditorid,jdbcType=VARCHAR}, 
+      #{faudittime,jdbcType=TIMESTAMP}, #{fCreatorID,jdbcType=VARCHAR}, #{fCreateTime,jdbcType=TIMESTAMP}, 
+      #{fModifierID,jdbcType=VARCHAR}, #{fModifierTime,jdbcType=TIMESTAMP}, #{fRemarks,jdbcType=VARCHAR}, 
+      #{fnumber,jdbcType=VARCHAR}, #{fstatus,jdbcType=VARCHAR}, #{fserviceitemid,jdbcType=VARCHAR}, 
+      #{fservicestartdate,jdbcType=TIMESTAMP}, #{fserviceenddate,jdbcType=TIMESTAMP}, 
+      #{foldmanid,jdbcType=VARCHAR}, #{fnurselevelid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" >
+    insert into t_kfgl_oldmanserviceitem
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        FID,
+      </if>
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID,
+      </if>
+      <if test="fauditorid != null" >
+        FAuditorID,
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime,
+      </if>
+      <if test="fCreatorID != null" >
+        FCreatorID,
+      </if>
+      <if test="fCreateTime != null" >
+        FCreateTime,
+      </if>
+      <if test="fModifierID != null" >
+        FModifierID,
+      </if>
+      <if test="fModifierTime != null" >
+        FModificationTime,
+      </if>
+      <if test="fRemarks != null" >
+        FRemarks,
+      </if>
+      <if test="fnumber != null" >
+        Fnumber,
+      </if>
+      <if test="fstatus != null" >
+        Fstatus,
+      </if>
+      <if test="fserviceitemid != null" >
+        FserviceitemID,
+      </if>
+      <if test="fservicestartdate != null" >
+        FserviceStartDate,
+      </if>
+      <if test="fserviceenddate != null" >
+        FserviceEndDate,
+      </if>
+      <if test="foldmanid != null" >
+        FoldManID,
+      </if>
+      <if test="fnurselevelid != null" >
+        FnurseLevelID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fid != null" >
+        #{fid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnursingHomeid != null" >
+        #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <if test="fauditorid != null" >
+        #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fCreatorID != null" >
+        #{fCreatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="fCreateTime != null" >
+        #{fCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fModifierID != null" >
+        #{fModifierID,jdbcType=VARCHAR},
+      </if>
+      <if test="fModifierTime != null" >
+        #{fModifierTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fRemarks != null" >
+        #{fRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceitemid != null" >
+        #{fserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fservicestartdate != null" >
+        #{fservicestartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fserviceenddate != null" >
+        #{fserviceenddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foldmanid != null" >
+        #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnurselevelid != null" >
+        #{fnurselevelid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" >
+    update t_kfgl_oldmanserviceitem
+    <set >
+      <if test="fnursingHomeid != null" >
+        Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      </if>
+      <!-- <if test="fauditorid != null" >
+        FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      </if>
+      <if test="faudittime != null" >
+        FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fCreatorID != null" >
+        FCreatorID = #{fCreatorID,jdbcType=VARCHAR},
+      </if>
+      <if test="fCreateTime != null" >
+        FCreateTime = #{fCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fModifierID != null" >
+        FModifierID = #{fModifierID,jdbcType=VARCHAR},
+      </if>
+      <if test="fModifierTime != null" >
+        FModificationTime = #{fModifierTime,jdbcType=TIMESTAMP},
+      </if> -->
+      <if test="fRemarks != null" >
+        FRemarks = #{fRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="fnumber != null" >
+        Fnumber = #{fnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="fstatus != null" >
+        Fstatus = #{fstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="fserviceitemid != null" >
+        FserviceitemID = #{fserviceitemid,jdbcType=VARCHAR},
+      </if>
+      <if test="fservicestartdate != null" >
+        FserviceStartDate = #{fservicestartdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fserviceenddate != null" >
+        FserviceEndDate = #{fserviceenddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="foldmanid != null" >
+        FoldManID = #{foldmanid,jdbcType=VARCHAR},
+      </if>
+      <if test="fnurselevelid != null" >
+        FnurseLevelID = #{fnurselevelid,jdbcType=VARCHAR},
+      </if>
+      <if test="fexecutecycle != null" >
+        fexecutecycle = #{fexecutecycle,jdbcType=INTEGER},
+      </if>
+      <if test="fsecplanExcluddate != null" >
+        fsecplanExcluddate = #{fsecplanExcluddate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" >
+    update t_kfgl_oldmanserviceitem
+    set Fnursing_homeID = #{fnursingHomeid,jdbcType=VARCHAR},
+      FAuditorID = #{fauditorid,jdbcType=VARCHAR},
+      FAuditTime = #{faudittime,jdbcType=TIMESTAMP},
+      FCreatorID = #{fCreatorID,jdbcType=VARCHAR},
+      FCreateTime = #{fCreateTime,jdbcType=TIMESTAMP},
+      FModifierID = #{fModifierID,jdbcType=VARCHAR},
+      FModificationTime = #{fModifierTime,jdbcType=TIMESTAMP},
+      FRemarks = #{fRemarks,jdbcType=VARCHAR},
+      Fnumber = #{fnumber,jdbcType=VARCHAR},
+      Fstatus = #{fstatus,jdbcType=VARCHAR},
+      FserviceitemID = #{fserviceitemid,jdbcType=VARCHAR},
+      FserviceStartDate = #{fservicestartdate,jdbcType=TIMESTAMP},
+      FserviceEndDate = #{fserviceenddate,jdbcType=TIMESTAMP},
+      FoldManID = #{foldmanid,jdbcType=VARCHAR},
+      FnurseLevelID = #{fnurselevelid,jdbcType=VARCHAR}
+    where FID = #{fid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="getNoSelectOldManServiceItem" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" resultMap="BaseResultMap">
+  		select * from t_kfgl_oldmanserviceitem omsi where omsi.foldmanid=#{foldmanid} and omsi.FserviceitemID not in(${fids})
+  </select>
+  
+  <update id="updateOldManServiceItem" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo">
+  		update t_kfgl_oldmanserviceitem
+  		<set>
+	  		<if test="fstatus != null" >
+	        	Fstatus = #{fstatus,jdbcType=VARCHAR},
+	      	</if>
+	  		<if test="fservicestartdate != null" >
+		        FserviceStartDate = #{fservicestartdate,jdbcType=TIMESTAMP},
+		    </if>
+		    <if test="fserviceenddate != null" >
+		       	FserviceEndDate = #{fserviceenddate,jdbcType=TIMESTAMP},
+		    </if>
+  		</set>
+  		where foldmanid=#{foldmanid} and FserviceitemID in (${fids})
+  </update>
+  
+  <select id="getAllOldMan" resultType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo">
+  		SELECT
+			om.fid
+	 	from t_oldman_main om
+		where 1=1
+		and om.FoldManStatusID IN (
+				SELECT
+					dc.DC_ID
+				FROM
+					data_dictionary dc
+				WHERE
+					dc.dc_name = '老人状态'
+				AND dc.dc_value = '在院'
+			)
+		and om.FoldManTypeID IN (
+				SELECT
+					dc.DC_ID
+				FROM
+					data_dictionary dc
+				WHERE
+					dc.dc_name = '入住类型'
+				AND dc.dc_value = '长期'
+			)
+  </select>
+  
+    <select id="getLevelOldMan" resultType="com.channelsoft.ems.nursing.nursingPlan.po.OldManPo">
+  		SELECT
+			om.fid,
+			om.FnursingLevel as fnursingLevel
+	 	from t_oldman_main om
+		where 1=1
+		and om.FoldManStatusID IN (
+				SELECT
+					dc.DC_ID
+				FROM
+					data_dictionary dc
+				WHERE
+					dc.dc_name = '老人状态'
+				AND dc.dc_value = '在院'
+			)
+		and om.FoldManTypeID IN (
+				SELECT
+					dc.DC_ID
+				FROM
+					data_dictionary dc
+				WHERE
+					dc.dc_name = '入住类型'
+				AND dc.dc_value = '长期'
+			)
+		and om.FnursingLevel IN (${levels})	
+  </select>
+  
+  <select id="getOldManServiceItems" parameterType="com.channelsoft.ems.nursing.nursingPlan.po.OldManServiceItemPo" resultMap="BaseResultMap">
+  		SELECT
+			omsi.*,
+			om.FEndDate
+		FROM
+			t_kfgl_oldmanserviceitem omsi
+		LEFT JOIN t_kfgl_serviceitem om ON omsi.FserviceitemID = om.FID
+		WHERE
+			omsi.Fstatus = '1'
+		AND omsi.FoldManID = #{foldmanid}
+		AND om.Fstatus='1'
+		and TO_DAYS(omsi.FserviceStartDate) &lt;=TO_DAYS(#{nowDate})
+		and TO_DAYS(om.FStarteDate) &lt;=TO_DAYS(#{nowDate}) 
+  </select>
+  
+    <select id="getAllServiceItem" resultMap="ServiceItemBaseResultMap">
+  		SELECT
+			si.*
+		FROM
+			t_kfgl_serviceitem si
+		LEFT JOIN t_kfgl_servicegroup sg ON si.FServiceGroupID = sg.fid
+		WHERE sg.FserviceType = '1'
+  </select>
+  
+    <select id="getOwnerServiceItem" resultMap="ServiceItemBaseResultMap" parameterType="java.lang.String">
+  		SELECT
+			DISTINCT(si.fid) as fid
+		FROM
+			t_kfgl_serviceitem si
+		LEFT JOIN t_kfgl_servicegroup sg ON si.FServiceGroupID = sg.fid
+		left join t_kfgl_serviceitemlevel sl on si.fid=sl.FParentid
+		WHERE sg.FserviceType = '1' 
+		and sl.FnurseLevelID=#{fnursingLevel}
+  </select>
+  
+   <select id="checkServiceItemExist" resultType="java.lang.Integer">
+  		SELECT
+			count(1)
+		FROM
+			t_kfgl_oldmanserviceitem omsi
+		WHERE
+			omsi.foldmanid = #{foldmanid}
+		AND omsi.FserviceitemID = #{fserviceitemid}
+  </select>
+  
+  <!-- <select id="getOWNerOldMan" parameterType="java.lang.String" resultType="java.lang.String">
+  		SELECT
+			om.fid
+		FROM
+			T_ARRGNG_HOME ah
+		inner JOIN t_oldman_main om ON ah.FHomeID = om.FroomID
+		WHERE ah.FStaffID=#{curUserID}
+  </select> -->
+</mapper>

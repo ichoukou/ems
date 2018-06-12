@@ -1,0 +1,295 @@
+/**
+ * lizhu
+ */
+$(function () {
+    // 1.初始化Table
+    var oTable = new TableInit();
+    oTable.Init();
+    getLeaveType();
+});
+
+var TableInit = function () {
+    var oTableInit = new Object();
+    // 初始化Table
+    oTableInit.Init = function () {
+        $('#tb_oldManUnsubList').bootstrapTable({
+            url: 'query.do',   // 请求后台的URL（*）
+            method: 'get',      // 请求方式（*）
+            toolbar: '#toolbar',    // 工具按钮用哪个容器
+            striped: true,      // 是否显示行间隔色
+            cache: false,      // 是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,     // 是否显示分页（*）
+            sortable: false,      // 是否启用排序
+            sortOrder: "asc",     // 排序方式
+            queryParams: oTableInit.queryParams,// 传递参数（*）
+            sidePagination: "server",   // 分页方式：client客户端分页，server服务端分页（*）
+            pageNumber:1,      // 初始化加载第一页，默认第一页
+            pageSize: 10,      // 每页的记录行数（*）
+            pageList: [10, 25, 50, 100],  // 可供选择的每页的行数（*）
+            search: false,      // 是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: true,
+            showColumns: true,     // 是否显示所有的列
+            showRefresh: true,     // 是否显示刷新按钮
+            minimumCountColumns: 2,    // 最少允许的列数
+            clickToSelect: true,    // 是否启用点击选中行
+            height: 350,      // 行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",      // 每一行的唯一标识，一般为主键列
+            showToggle:true,     // 是否显示详细视图和列表视图的切换按钮
+            cardView: false,     // 是否显示详细视图
+            detailView: false,     // 是否显示父子表
+            showExport: true,                     //是否显示导出
+            columns: [{
+                radio: true
+            }, {
+                field: 'fID',
+                title: '序号'
+            },  {
+                field: 'foldManName',
+                title: '姓名'
+            }, {
+                field: 'fOldManIDnSex',
+                title: '性别'
+            }, {
+                field: 'fcheckoutTime',
+                title: '退住日期'
+            }, {
+                field: 'fLeaveTypeName',
+                title: '退住类型'
+            }, {
+                field: 'fBuildingName',
+                title: '大厦'
+            }, {
+                field: 'fcheckinTime',
+                title: '入住日期'
+            }, {
+                field: 'fRoomName',
+                title: '房间'
+            },{
+                field: 'fBedNumber',
+                title: '床位',
+            },{
+                field: 'fLeaveReason',
+                title: '说明'
+            } ],
+            onLoadSuccess:function(data){
+            	console.log(data);
+            }
+        });
+    };
+
+    // 得到查询的参数
+    oTableInit.queryParams = function (params) {
+        var temp = { // 这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            pageSize: params.limit, // 页面大小
+            page: params.offset // 页码
+            // name: $("#searchName").val(),
+            // value: $("#searchValue").val()
+        };
+        return temp;
+    };
+    return oTableInit;
+};
+/**
+ * 按条件检索
+ */
+function queryBy(){
+	var foldManName=$("#foldManName").val();
+	var startDate=$("#startDate").val();
+	var endDate=$("#endDate").val();
+	var fcheckoutTime;
+	if(startDate!=""&&endDate!=""){
+		fcheckoutTime=startDate+"@"+endDate;
+	}else if(startDate!=""){
+		fcheckoutTime=startDate;
+	}else{
+		fcheckoutTime=endDate;
+	}
+	$.ajax({
+		url:contextPath + "/quit/query.do",
+		type:"post",
+		data:{
+			foldManName:foldManName,
+			fcheckoutTime:fcheckoutTime,
+			pageSize:10, // 页面大小
+	        page:0 // 页码
+		},
+		success:function(data){
+			 $('#tb_oldManUnsubList').bootstrapTable('load', data);
+		}
+	});
+}
+
+/**
+ * 清空搜索框
+ */
+function clearQueryInput(){
+	$("#foldManName").val("");
+	$("#startDate").val("");
+	$("#endDate").val("");
+}
+/**
+ * 得到老人照片列表
+ */
+function selectOldMan(){
+    $('#oldManModal').modal('show')
+}
+
+function getOldManWithPhoto(temp){
+    $("#addfOldManID").val(temp.getAttribute("selectOmId"));
+    $("#oldManName").val(temp.getAttribute("selectName"));
+    $('#oldManModal').modal('hide')
+}
+
+/**
+ * 回显用的类型名称
+ */
+function getLeaveType(){
+	$.ajax({
+		url:contextPath + "/quit/getLeaveType.do",
+		type:"post",
+		data:{
+			name:"退住类型"
+		},
+		success:function(data){
+			var dcList=data.rows;
+			var dcLength=data.total;
+			for(var i=0;i<dcLength;i++){
+				$("#leaveType").append("<option value='" + data.rows[i].id + "'>"
+						+ data.rows[i].value + "</option>");
+			}
+		}
+	});
+}
+
+/**
+ * 添加老人入住信息
+ */
+function add(){
+	var oldManId=$("#addfOldManID").val();
+	var fcheckoutTime=$("#fcheckoutTime").val();
+	var leaveType=$("#leaveType").val();
+	var fLeaveReason=$("#fLeaveReason").val();
+	if(checkName()&&checkDate()&&checkReason()){
+		document.getElementById("addButton").setAttribute("data-dismiss","modal");
+		$.ajax({
+			url:contextPath+"/quit/addLeave.do",
+			type:"post",
+			data:{
+				fID:oldManId,
+				fcheckoutTime:fcheckoutTime,
+				fLeaveType:leaveType,
+				fLeaveReason:fLeaveReason
+			},
+			success:function(data){
+				var msg=data.message;
+				if(msg=="老人不存在"){
+			    document.getElementById("addButton").removeAttribute("data-dismiss");
+			    setAlert("error","老人不存在");
+				}else{
+					document.getElementById("addButton").setAttribute("data-dismiss","modal");
+					$('#tb_oldManUnsubList').bootstrapTable('refresh', {url: 'query.do'});
+		            setAlert("success","操作成功");
+				}
+			}
+		}); 
+	}else{
+		document.getElementById("addButton").removeAttribute("data-dismiss");
+		setAlert("error","操作失败");
+	}
+}
+
+/**
+ * 删除退住记录
+ */
+function deleteLeave(){
+	 var carrentItem = $("#tb_oldManUnsubList").bootstrapTable('getSelections');
+	    if(carrentItem[0]){
+	      $.ajax({
+	    	 url:contextPath+"/quit/deleteLeave.do",
+	    	 type:"post",
+	    	 data:{
+	    		 fID:carrentItem[0].fID
+	    	 },
+	    	 success:function(data){
+	    		 $('#tb_oldManUnsubList').bootstrapTable('refresh', {url: 'query.do'});
+		            setAlert(data.message,"操作成功");
+	    	 }
+	      });
+	    }else{
+	        setAlert("error","请先选择一条数据");
+	    }
+}
+/**
+ * 用户名校验（非空）
+ */
+function checkName(){
+	var oldManName=$("#oldManName").val();
+	if($("#showId")!=null||$("#showId")!=""){
+		$("#showId").remove();
+	}
+	if(oldManName==""||oldManName=="单击选择老人"){
+		$("#errorName").append("<font color='red' id='showId'>请选择老人</font>");
+		return false;
+	}
+	$("#errorName").append("");
+	return true;
+}
+/**
+ * 退住时间非空校验
+ */
+function checkDate(){
+	var fcheckoutTime=$("#fcheckoutTime").val();
+	if($("#showTime")!=null||$("#showTime")!=""){
+		$("#showTime").remove();
+	}
+	if(fcheckoutTime==""){
+		$("#errorDate").append("<font color='red' id='showTime'>请选择时间</font>");
+		return false;
+	}
+	$("#errorDate").append("");
+	return true;
+}
+
+function checkReason(){
+	var fLeaveReason=$("#fLeaveReason").val();
+	if($("#showReason")!=null||$("#showReason")!=""){
+		$("#showReason").remove();
+	}
+	if(fLeaveReason==""){
+		$("#errorReason").append("<font color='red' id='showReason'>请输入原因</font>");
+		return false;
+	}
+	$("#errorReason").append("");
+	return true;
+}
+
+$(function(){
+	$("#addQuit_button").click(function(){
+		clearInput();
+	});
+});
+
+
+/**
+ * 清除所有的框
+ */
+function clearInput(){
+	$("#oldManName").val("");
+	$("#fcheckoutTime").val("");
+	$("#fLeaveReason").val("");
+	removeError();
+}
+/**
+ * 去掉错误提示
+ */
+function removeError(){
+	if($("#showId")!=null||$("#showId")!=""){
+		$("#showId").remove();
+	}
+	if($("#showTime")!=null||$("#showTime")!=""){
+		$("#showTime").remove();
+	}
+	if($("#showReason")!=null||$("#showReason")!=""){
+		$("#showReason").remove();
+	}
+}
